@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Submission {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Form mode
+  formMode        FormMode
+
+  // Step 1: Personal Identity & Contact
+  fullName        String
+  email           String
+  phone           String
+  dateOfBirth     DateTime?
+  formDate        DateTime @default(now())
+
+  // Step 2: Address
+  address         String?
+
+  // Step 3: Study Level & Prior Education
+  studyLevel      StudyLevel?
+  previousCollege String?
+  previousCreditHours Int?
+
+  // Step 4: Current Enrollment
+  currentCollege  String?
+  currentCreditHours Int?
+
+  // Step 5: Transfer Destination & Timing
+  intendedCollege String?
+  plannedCreditHours Int?
+  termYear        Int?
+  termSeason      TermSeason?
+
+  // Step 6: Major Plan
+  major           String?
+  switchingMajor  Boolean?
+  switchMajorDetails String?
+
+  // Step 7: Academics, Tuition & Scholarships
+  previousGPA     Decimal?  @db.Decimal(4, 2)
+  expectedGPA     Decimal?  @db.Decimal(4, 2)
+  previousTuition Decimal?  @db.Decimal(10, 2)
+  currentTuition  Decimal?  @db.Decimal(10, 2)
+  hasScholarship  Boolean?
+  scholarshipAmount Decimal? @db.Decimal(10, 2)
+  payingPerSemester Decimal? @db.Decimal(10, 2)
+
+  // Step 8: Motivation & Profile
+  transferReason  String?
+  institutionReason String?
+  extracurriculars String?
+
+  // Step 9: Immigration & Special Circumstances
+  immigrationStatus String?
+  specialCircumstances String?
+
+  // Step 10: Referral & Communication
+  referredBy      String?
+  howDidYouKnow   String?
+  preferredChannelLink String?
+  preferredChannel CommunicationChannel?
+
+  // Consent & Audit
+  consent         Boolean   @default(false)
+  ipHash          String?
+  ua              String?
+
+  @@index([email])
+  @@index([createdAt(sort: Desc)])
+  @@index([termSeason, termYear])
+  @@index([formMode])
+}
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // argon2 hash
+  createdAt DateTime @default(now())
+  active    Boolean  @default(true)
+}
+
+model RateLimit {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  count     Int      @default(1)
+  windowStart DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key, windowStart])
+}
+
+enum FormMode {
+  partial
+  full
+}
+
+enum StudyLevel {
+  Undergraduate
+  Graduate
+  Associate
+  Certificate
+  Other
+}
+
+enum TermSeason {
+  Spring
+  Summer
+  Fall
+  Other
+}
+
+enum CommunicationChannel {
+  Facebook
+  LinkedIn
+  Whatsapp
+  Instagram
+  Twitter
+  Email
+  Phone
+}

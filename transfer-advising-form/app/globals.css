@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --msu-red: #840029;
+  --msu-yellow: #FCB116;
+  --msu-orange: #BA4F21;
+  --msu-gray-primary: #6E6565;
+  --msu-gray-secondary: #5C5959;
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--msu-gray-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--msu-red);
+}
+
+/* Hero gradient overlay */
+.hero-overlay {
+  background: linear-gradient(135deg, rgba(132, 0, 41, 0.85) 0%, rgba(186, 79, 33, 0.75) 50%, rgba(252, 177, 22, 0.65) 100%);
+}
+
+/* MSU Button styles */
+.btn-msu-primary {
+  background: linear-gradient(135deg, #840029 0%, #BA4F21 100%);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-msu-primary:hover {
+  background: linear-gradient(135deg, #6d0021 0%, #9a3f1a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(132, 0, 41, 0.3);
+}
+
+.btn-msu-secondary {
+  background: #FCB116;
+  color: #840029;
+  transition: all 0.3s ease;
+}
+
+.btn-msu-secondary:hover {
+  background: #f59e0b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(252, 177, 22, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
