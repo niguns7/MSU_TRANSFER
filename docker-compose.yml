@@ -3,25 +3,34 @@ version: "3.9"
 name: transfer-advising-form
 
 services:
+  # -----------------------
+  # PostgreSQL Database
+  # -----------------------
   db:
     image: postgres:16-alpine
     container_name: transfer-form-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: transfer_advising
-      POSTGRES_USER: app
-      POSTGRES_PASSWORD: s3cure_P0stgr3s_Pass   # <-- real strong password
+      POSTGRES_DB: transferdb
+      POSTGRES_USER: transferuser
+      POSTGRES_PASSWORD: transferpassword
     command: ["postgres", "-c", "max_connections=200", "-c", "shared_buffers=256MB"]
     volumes:
       - pgdata:/var/lib/postgresql/data
-    networks: [app_net]
-    # No "ports": DB stays private on the Docker network
+    networks:
+      - app_net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U app -d transfer_advising"]
+      test: ["CMD-SHELL", "pg_isready -U transferuser -d transferdb"]
       interval: 10s
       timeout: 5s
       retries: 10
+    # Expose DB port only to host (optional)
+    ports:
+      - "5432:5432"
 
+  # -----------------------
+  # Web / Backend App
+  # -----------------------
   web:
     build:
       context: .
@@ -30,22 +39,27 @@ services:
     restart: unless-stopped
     env_file: .env.production
     environment:
-      # Always present so you can override via env_file if needed
       NODE_ENV: production
       PORT: 3000
-      # Prisma talks to db service name, not 127.0.0.1
-      DATABASE_URL: postgresql://app:s3cure_P0stgr3s_Pass@db:5432/transfer_advising?schema=public
+      # IMPORTANT: connect to db service, not 127.0.0.1
+      DATABASE_URL: postgresql://transferuser:transferpassword@db:5432/transferdb?schema=public
     depends_on:
       db:
         condition: service_healthy
-    networks: [app_net]
-    # Publish only the app on a free high port; leave others untouched
+    networks:
+      - app_net
     ports:
-      - "3052:3000"
+      - "3052:3000"  # App accessible on server port 3052
 
+# -----------------------
+# Persistent Storage
+# -----------------------
 volumes:
   pgdata:
 
+# -----------------------
+# Private Bridge Network
+# -----------------------
 networks:
   app_net:
     driver: bridge
