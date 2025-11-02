@@ -123,13 +123,13 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
   return (
     <Box>
       {/* Progress Header */}
-      <Paper shadow="sm" p="lg" radius="md" mb="xl" style={{ background: 'linear-gradient(135deg, #840029 0%, #BA4F21 100%)' }}>
-        <Group justify="space-between" mb="sm">
+      <Paper shadow="sm" p="lg" radius="md" mb="xl" style={{ background: 'linear-gradient(135deg, #840029 0%, #BA4F21 100%)' }} className="!p-4 sm:!p-6">
+        <Group justify="space-between" mb="sm" wrap="wrap" gap="sm">
           <Box>
-            <Text c="white" size="xs" fw={600} tt="uppercase" mb={4}>
+            <Text c="white" size="sm" fw={600} tt="uppercase" mb={4} className="!text-xs sm:!text-sm">
               Transfer Application Progress
             </Text>
-            <Text c="#FCB116" size="xl" fw={700}>
+            <Text c="#FCB116" size="xl" fw={700} className="!text-lg sm:!text-xl">
               Step {active + 1} of 10
             </Text>
           </Box>
@@ -140,8 +140,10 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
               size="sm"
               leftSection={<IoChevronBack />}
               onClick={onBack}
+              className="!text-xs sm:!text-sm"
             >
-              Back to Form Selection
+              <span className="hidden sm:inline">Back to Form Selection</span>
+              <span className="sm:hidden">Back</span>
             </Button>
           )}
         </Group>
@@ -149,79 +151,115 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
           value={progress}
           size="lg"
           radius="xl"
+          className="!h-2 sm:!h-3"
           styles={{
             root: { backgroundColor: 'rgba(255,255,255,0.2)' },
-            bar: { background: 'linear-gradient(90deg, #FCB116 0%, #FCD34D 100%)' },
+            section: { background: 'linear-gradient(90deg, #FCB116 0%, #FCD34D 100%)' },
           }}
         />
       </Paper>
 
       {/* Form Content */}
-      <Paper shadow="lg" p="xl" radius="md" style={{ border: '2px solid #f0f0f0' }}>
-        <Stepper 
-          active={active} 
-          onStepClick={setActive}
-          size="sm" 
-          mb="xl"
-          color="msuRed"
-          completedIcon={<Text size="xs">✓</Text>}
-          styles={{
-            step: {
-              padding: 8,
-            },
-            stepIcon: {
-              borderWidth: 2,
-              borderColor: '#840029',
-            },
-            separator: {
-              background: '#e0e0e0',
-              height: 2,
-            },
-            separatorActive: {
-              background: '#840029',
-            },
-            stepBody: {
-              display: 'none', // Hide labels on mobile
-              '@media (min-width: 768px)': {
-                display: 'block',
+      <Paper shadow="lg" p="xl" radius="md" style={{ border: '2px solid #f0f0f0' }} className="!p-4 sm:!p-6 md:!p-8">
+        {/* Desktop Stepper */}
+        <Box className="hidden md:block mb-8">
+          <Stepper 
+            active={active} 
+            onStepClick={setActive}
+            size="lg"
+            color="msuRed"
+            completedIcon={<Text size="md" fw={700}>✓</Text>}
+            styles={{
+              step: {
+                padding: 12,
+                minWidth: 100,
               },
-            },
-          }}
-        >
-          <Stepper.Step label="Personal Info">
-            <Text size="xs" c="dimmed">Contact details</Text>
-          </Stepper.Step>
-          <Stepper.Step label="Address">
-            <Text size="xs" c="dimmed">Location</Text>
-          </Stepper.Step>
-          <Stepper.Step label="Study Level">
-            <Text size="xs" c="dimmed">Education</Text>
-          </Stepper.Step>
-          <Stepper.Step label="Current Enrollment">
-            <Text size="xs" c="dimmed">Institution</Text>
-          </Stepper.Step>
-          <Stepper.Step label="Transfer Plan">
-            <Text size="xs" c="dimmed">Destination</Text>
-          </Stepper.Step>
-          <Stepper.Step label="Major">
-            <Text size="xs" c="dimmed">Program</Text>
-          </Stepper.Step>
-          <Stepper.Step label="Academics">
-            <Text size="xs" c="dimmed">GPA & Tuition</Text>
-          </Stepper.Step>
-          <Stepper.Step label="Motivation">
-            <Text size="xs" c="dimmed">Why transfer</Text>
-          </Stepper.Step>
-          <Stepper.Step label="Immigration">
-            <Text size="xs" c="dimmed">Status</Text>
-          </Stepper.Step>
-          <Stepper.Step label="Communication">
-            <Text size="xs" c="dimmed">Preferences</Text>
-          </Stepper.Step>
-        </Stepper>
+              stepIcon: {
+                borderWidth: 3,
+                borderColor: '#840029',
+                width: 48,
+                height: 48,
+                fontSize: 18,
+                fontWeight: 700,
+              },
+              stepCompletedIcon: {
+                borderColor: '#840029',
+                backgroundColor: '#840029',
+              },
+              separator: {
+                background: '#e0e0e0',
+                height: 3,
+                marginLeft: 8,
+                marginRight: 8,
+              },
+              stepBody: {
+                marginTop: 8,
+              },
+              stepLabel: {
+                fontSize: 14,
+                fontWeight: 600,
+                color: '#840029',
+              },
+              stepDescription: {
+                fontSize: 12,
+                color: '#6E6565',
+              },
+            }}
+          >
+            <Stepper.Step label="Personal Info" description="Contact details" />
+            <Stepper.Step label="Address" description="Location" />
+            <Stepper.Step label="Study Level" description="Education" />
+            <Stepper.Step label="Current" description="Institution" />
+            <Stepper.Step label="Transfer Plan" description="Destination" />
+            <Stepper.Step label="Major" description="Program" />
+            <Stepper.Step label="Academics" description="GPA & Tuition" />
+            <Stepper.Step label="Motivation" description="Why transfer" />
+            <Stepper.Step label="Immigration" description="Status" />
+            <Stepper.Step label="Contact" description="Preferences" />
+          </Stepper>
+        </Box>
 
-        <Box mb="xl" p="md" style={{ background: '#fef3c7', borderRadius: 8, borderLeft: '4px solid #840029' }}>
-          <Text size="sm" fw={600} c="#840029" mb={4}>
+        {/* Mobile Stepper - Simplified */}
+        <Box className="block md:hidden mb-8">
+          <Stepper 
+            active={active} 
+            size="md"
+            color="msuRed"
+            orientation="horizontal"
+            completedIcon={<Text size="sm" fw={700}>✓</Text>}
+            styles={{
+              step: {
+                padding: 4,
+              },
+              stepIcon: {
+                borderWidth: 2,
+                borderColor: '#840029',
+                width: 36,
+                height: 36,
+                fontSize: 14,
+                fontWeight: 700,
+              },
+              stepCompletedIcon: {
+                borderColor: '#840029',
+                backgroundColor: '#840029',
+              },
+              separator: {
+                background: '#e0e0e0',
+                height: 2,
+              },
+              stepBody: {
+                display: 'none',
+              },
+            }}
+          >
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((step) => (
+              <Stepper.Step key={step} />
+            ))}
+          </Stepper>
+        </Box>
+
+        <Box mb="xl" p={{ base: 'sm', sm: 'md' }} style={{ background: '#fef3c7', borderRadius: 8, borderLeft: '4px solid #840029' }}>
+          <Text size="md" fw={600} c="#840029" mb={4} className="text-sm sm:text-base">
             {
               ['Personal Identity & Contact', 'Complete Address', 'Study Level & Prior Education', 
                'Current Enrollment', 'Transfer Destination & Timing', 'Major Plan', 
@@ -229,7 +267,7 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
                'Immigration & Special Circumstances', 'Referral & Communication Preferences'][active]
             }
           </Text>
-          <Text size="xs" c="#6E6565">
+          <Text size="sm" c="#6E6565" className="text-xs sm:text-sm">
             All fields marked with <Text component="span" c="red">*</Text> are required for the full application.
           </Text>
         </Box>
@@ -246,11 +284,12 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
           {active === 8 && <Step9Immigration form={form} />}
           {active === 9 && <Step10Communication form={form} />}
 
-          <Group justify="space-between" mt="xl" pt="xl" style={{ borderTop: '2px solid #f0f0f0' }}>
+          <Group justify="space-between" mt="xl" pt="xl" style={{ borderTop: '2px solid #f0f0f0' }} wrap="wrap" gap="md">
             <Button 
               variant="outline" 
               color="gray"
               size="lg"
+              className="!text-sm sm:!text-base w-full xs:w-auto"
               leftSection={<IoChevronBack />}
               onClick={prevStep} 
               disabled={active === 0}
@@ -269,6 +308,7 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
             {active < 9 ? (
               <Button 
                 size="lg"
+                className="!text-sm sm:!text-base w-full xs:w-auto"
                 rightSection={<IoChevronForward />}
                 onClick={nextStep}
                 styles={{
@@ -286,6 +326,7 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
               <Button 
                 type="submit" 
                 size="lg"
+                className="!text-sm sm:!text-base w-full xs:w-auto"
                 loading={loading}
                 styles={{
                   root: {
