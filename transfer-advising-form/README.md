@@ -388,3 +388,4 @@ For issues and questions:
 - Built with Next.js 14, Prisma, Mantine, and TypeScript
 - Deployed with Docker and Nginx
 - Inspired by modern web application best practices
+# MSU_TRANSFER
