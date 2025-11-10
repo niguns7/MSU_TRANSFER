@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Container, Paper, Stepper, Button, Group, Title, Text, Box, Progress } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useState } from 'react';
@@ -16,6 +17,7 @@ interface FullFormWizardProps {
 }
 
 export function FullFormWizard({ onBack }: FullFormWizardProps) {
+  const router = useRouter();
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
   const [submissionId, setSubmissionId] = useState<string | null>(null);
@@ -278,6 +280,8 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
         setActive(0);
         setSubmissionId(null);
         if (onBack) onBack();
+        // Redirect to success page
+        router.push('/success');
       } else {
         // Fallback: create new submission if no ID exists
         console.log('Creating new submission with all data');
@@ -306,6 +310,8 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
         form.reset();
         setActive(0);
         if (onBack) onBack();
+        // Redirect to success page
+        router.push('/success');
       }
     } catch (error: any) {
       console.error('Final submission error:', error);
