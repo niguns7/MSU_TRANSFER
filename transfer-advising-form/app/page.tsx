@@ -14,6 +14,8 @@ export default function HomePage() {
 
   return (
     <>
+<<<<<<< HEAD
+=======
       {/* Floating WhatsApp Button */}
       <a
         href="https://wa.me/9779866590393"
@@ -32,6 +34,7 @@ export default function HomePage() {
         </svg>
       </a>
 
+>>>>>>> 2e2921a (form fixing by pooja)
       {/* Hero Section */}
       <div
         className="min-h-full relative"
@@ -125,7 +128,11 @@ export default function HomePage() {
                   <span className="hidden sm:inline">
                     Transfer Advising Appilcation
                   </span>
+<<<<<<< HEAD
+                  <span className="sm:hidden">Request Info</span>
+=======
                   <span className="sm:hidden">Transfer Advising</span>
+>>>>>>> 2e2921a (form fixing by pooja)
                 </span>
               </div>
             </div>
@@ -153,6 +160,23 @@ export default function HomePage() {
         </div>
       </div> */}
 
+<<<<<<< HEAD
+        {/* Form Section */}
+        <div className="min-h-[300px] sm:min-h-[500px] py-6 sm:py-10 relative px-4">
+          <div className="container mx-auto max-w-6xl">
+            {/* Forms displayed below buttons */}
+            <div className="mt-4 sm:mt-8">
+              {showPartialModal && (
+                <div className="bg-white w-full rounded-lg shadow-lg p-4 sm:p-6 md:p-8 border-2 border-dashed border-blue-400">
+                  <PartialFormModal
+                    opened={true}
+                    onClose={() => setShowPartialModal(false)}
+                    onSuccess={() => setShowPartialModal(false)}
+                  />
+                </div>
+              )}
+
+=======
         <div className="mt-4">
 
         </div>
@@ -175,6 +199,7 @@ export default function HomePage() {
                 </div>
               )}
 
+>>>>>>> 2e2921a (form fixing by pooja)
               {showFullForm && (
                 <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 md:p-8">
                   <FullFormWizard onBack={() => setShowFullForm(false)} />
