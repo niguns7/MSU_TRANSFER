@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Modal, TextInput, Stack, Button, Checkbox } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useState } from 'react';
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function PartialFormModal({ opened, onClose, onSuccess }: Props) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const form = useForm({
@@ -68,6 +70,9 @@ export function PartialFormModal({ opened, onClose, onSuccess }: Props) {
 
       form.reset();
       onSuccess();
+      
+      // Redirect to success page
+      router.push('/success');
     } catch (error: any) {
       console.error('PartialForm - Submission error:', error);
       notifications.show({
