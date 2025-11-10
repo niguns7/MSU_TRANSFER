@@ -28,6 +28,9 @@ model Submission {
   // Step 2: Address
   address         String?
 
+  // Country of Birth (for partial form)
+  countryOfBirth  String?
+
   // Step 3: Study Level & Prior Education
   studyLevel      StudyLevel?
   previousCollege String?
@@ -108,8 +111,10 @@ enum FormMode {
 }
 
 enum StudyLevel {
+  Freshman
   Undergraduate
   Graduate
+  InternationalTransfer // International Transfer
   Associate
   Certificate
   Other

@@ -11,10 +11,8 @@ export function Step4CurrentEnrollment({ form }: { form: any }) {
       />
       <NumberInput
         label="What is the credit hours enrolled in the current university/college?"
-        placeholder="0"
+        placeholder="enter credit hours"
         required
-        min={0}
-        max={200}
         {...form.getInputProps('currentCreditHours')}
       />
     </Stack>
