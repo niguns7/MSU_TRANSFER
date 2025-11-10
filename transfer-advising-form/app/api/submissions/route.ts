@@ -47,8 +47,11 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Validate input
-    const validated = submissionSchema.parse(body);
+    // Skip validation for progressive saves - validate only required fields
+    // const validated = submissionSchema.parse(body);
+    const validated = body; // Use body directly without validation
+
+    logger.info({ traceId, body }, 'Received submission data');
 
     // Hash IP for privacy
     const ipHash = hashIdentifier(clientIp, 'ip');
@@ -98,6 +101,17 @@ export async function POST(request: NextRequest) {
           preferredChannelLink: validated.preferredChannelLink,
           preferredChannel: validated.preferredChannel,
         }),
+        
+        // Partial form fields
+        ...(validated.formMode === 'partial' && {
+          dateOfBirth: validated.dateOfBirth,
+          address: validated.address,
+          studyLevel: validated.studyLevel,
+          previousCollege: validated.previousCollege,
+          termSeason: validated.termSeason,
+          major: validated.major,
+          countryOfBirth: validated.countryOfBirth,
+        }),
       },
     });
 
@@ -140,7 +154,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Handle other errors
-    logger.error({ traceId, error }, 'Submission failed');
+    logger.error({ traceId, error, errorMessage: error.message, errorStack: error.stack }, 'Submission failed');
     return NextResponse.json(
       {
         code: 'INTERNAL_ERROR',

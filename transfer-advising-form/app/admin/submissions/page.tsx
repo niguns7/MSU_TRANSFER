@@ -35,12 +35,6 @@ export default function AdminSubmissionsPage() {
     }
   }, [status, router]);
 
-  useEffect(() => {
-    if (status === 'authenticated') {
-      fetchSubmissions();
-    }
-  }, [status, page, search, formMode]);
-
   const fetchSubmissions = async () => {
     setLoading(true);
     try {
@@ -70,6 +64,13 @@ export default function AdminSubmissionsPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      fetchSubmissions();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, page, search, formMode]);
 
   const handleExport = async () => {
     try {
@@ -145,6 +146,7 @@ export default function AdminSubmissionsPage() {
                   <Table.Th>Phone</Table.Th>
                   <Table.Th>Form Mode</Table.Th>
                   <Table.Th>Major</Table.Th>
+                  <Table.Th>Actions</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
@@ -160,6 +162,15 @@ export default function AdminSubmissionsPage() {
                       </Badge>
                     </Table.Td>
                     <Table.Td>{submission.major || '-'}</Table.Td>
+                    <Table.Td>
+                      <Button
+                        size="xs"
+                        variant="light"
+                        onClick={() => router.push(`/admin/submissions/${submission.id}`)}
+                      >
+                        View Details
+                      </Button>
+                    </Table.Td>
                   </Table.Tr>
                 ))}
               </Table.Tbody>

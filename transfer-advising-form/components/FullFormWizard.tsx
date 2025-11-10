@@ -2,20 +2,13 @@
 
 import { Container, Paper, Stepper, Button, Group, Title, Text, Box, Progress } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { zodResolver } from 'mantine-form-zod-resolver';
 import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
-import { fullFormSchema } from '@/lib/validations';
-import { Step1PersonalInfo } from './steps/Step1PersonalInfo';
-import { Step2Address } from './steps/Step2Address';
-import { Step3StudyLevel } from './steps/Step3StudyLevel';
-import { Step4CurrentEnrollment } from './steps/Step4CurrentEnrollment';
-import { Step5TransferDestination } from './steps/Step5TransferDestination';
-import { Step6MajorPlan } from './steps/Step6MajorPlan';
-import { Step7Academics } from './steps/Step7Academics';
-import { Step8Motivation } from './steps/Step8Motivation';
-import { Step9Immigration } from './steps/Step9Immigration';
-import { Step10Communication } from './steps/Step10Communication';
+import { CombinedStep1PersonalAddress } from './steps/CombinedStep1PersonalAddress';
+import { CombinedStep2StudyLevelCurrent } from './steps/CombinedStep2StudyLevelCurrent';
+import { CombinedStep3MajorAcademics } from './steps/CombinedStep3MajorAcademics';
+import { CombinedStep4TransferMotivation } from './steps/CombinedStep4TransferMotivation';
+import { CombinedStep5ImmigrationContact } from './steps/CombinedStep5ImmigrationContact';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
 
 interface FullFormWizardProps {
@@ -25,17 +18,16 @@ interface FullFormWizardProps {
 export function FullFormWizard({ onBack }: FullFormWizardProps) {
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
 
   const form = useForm({
-    mode: 'uncontrolled',
-    validate: zodResolver(fullFormSchema),
+    validateInputOnBlur: true,
     initialValues: {
       formMode: 'full' as const,
       fullName: '',
       email: '',
       phone: '',
       dateOfBirth: null,
-      formDate: new Date(),
       address: '',
       studyLevel: 'Undergraduate' as const,
       previousCollege: '',
@@ -69,45 +61,254 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
     },
   });
 
-  const nextStep = () => {
-    // Validate current step before proceeding
-    if (!form.isValid()) {
-      form.validate();
-      return;
+  const nextStep = async () => {
+    // If it's the first step, POST the data with only Step 1 fields
+    if (active === 0 && !submissionId) {
+      setLoading(true);
+      try {
+        // Only send Step 1 fields (Personal Info & Address)
+        const step1Data = {
+          formMode: 'full' as const,
+          fullName: form.values.fullName,
+          email: form.values.email,
+          phone: form.values.phone,
+          dateOfBirth: form.values.dateOfBirth,
+          address: form.values.address,
+          consent: form.values.consent,
+          // Set other required fields to null/default to pass validation
+          studyLevel: null,
+          previousCollege: null,
+          previousCreditHours: null,
+          currentCollege: null,
+          currentCreditHours: null,
+          intendedCollege: null,
+          plannedCreditHours: null,
+          termYear: null,
+          termSeason: null,
+          major: null,
+          switchingMajor: false,
+          switchMajorDetails: null,
+          previousGPA: null,
+          expectedGPA: null,
+          previousTuition: null,
+          currentTuition: null,
+          hasScholarship: false,
+          scholarshipAmount: null,
+          payingPerSemester: null,
+          transferReason: null,
+          institutionReason: null,
+          extracurriculars: null,
+          immigrationStatus: null,
+          specialCircumstances: null,
+          referredBy: null,
+          howDidYouKnow: null,
+          preferredChannelLink: null,
+          preferredChannel: null,
+        };
+        
+        console.log('Submitting Step 1 data:', step1Data);
+        
+        const response = await fetch('/api/submissions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(step1Data),
+        });
+
+        const data = await response.json();
+        console.log('Response:', data);
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to save form');
+        }
+
+        setSubmissionId(data.id);
+        notifications.show({
+          title: 'Progress Saved',
+          message: 'Your information has been saved. Continue to the next step.',
+          color: 'green',
+        });
+        
+        // Move to next step
+        setActive((current) => (current < 4 ? current + 1 : current));
+      } catch (error: any) {
+        console.error('Submission error:', error);
+        notifications.show({
+          title: 'Error',
+          message: error.message || 'Failed to save form. Please try again.',
+          color: 'red',
+        });
+      } finally {
+        setLoading(false);
+      }
+    } 
+    // For subsequent steps, PATCH the data
+    else if (submissionId) {
+      setLoading(true);
+      try {
+        // Only send the fields relevant to the current step
+        const stepData: any = {};
+        
+        if (active === 1) {
+          // Step 2: Study Level & Current
+          stepData.studyLevel = form.values.studyLevel;
+          stepData.previousCollege = form.values.previousCollege || null;
+          stepData.previousCreditHours = form.values.previousCreditHours;
+          stepData.currentCollege = form.values.currentCollege || null;
+          stepData.currentCreditHours = form.values.currentCreditHours;
+        } else if (active === 2) {
+          // Step 3: Major & Academics
+          stepData.intendedCollege = form.values.intendedCollege || null;
+          stepData.plannedCreditHours = form.values.plannedCreditHours;
+          stepData.termYear = form.values.termYear;
+          stepData.termSeason = form.values.termSeason;
+          stepData.major = form.values.major || null;
+          stepData.switchingMajor = form.values.switchingMajor;
+          stepData.switchMajorDetails = form.values.switchMajorDetails || null;
+          stepData.previousGPA = form.values.previousGPA;
+          stepData.expectedGPA = form.values.expectedGPA;
+        } else if (active === 3) {
+          // Step 4: Transfer & Motivation
+          stepData.previousTuition = form.values.previousTuition;
+          stepData.currentTuition = form.values.currentTuition;
+          stepData.hasScholarship = form.values.hasScholarship;
+          stepData.scholarshipAmount = form.values.scholarshipAmount;
+          stepData.payingPerSemester = form.values.payingPerSemester;
+          stepData.transferReason = form.values.transferReason || null;
+          stepData.institutionReason = form.values.institutionReason || null;
+          stepData.extracurriculars = form.values.extracurriculars || null;
+        } else if (active === 4) {
+          // Step 5: Immigration & Contact
+          stepData.immigrationStatus = form.values.immigrationStatus || null;
+          stepData.specialCircumstances = form.values.specialCircumstances || null;
+          stepData.referredBy = form.values.referredBy || null;
+          stepData.howDidYouKnow = form.values.howDidYouKnow || null;
+          stepData.preferredChannelLink = form.values.preferredChannelLink || null;
+          stepData.preferredChannel = form.values.preferredChannel || null;
+        }
+        
+        console.log(`Step ${active + 1} data to update:`, stepData);
+        console.log('Submission ID:', submissionId);
+        
+        const response = await fetch(`/api/submissions/${submissionId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(stepData),
+        });
+
+        const data = await response.json();
+        console.log('Update response:', data);
+
+        if (!response.ok) {
+          console.error('Update failed with status:', response.status);
+          console.error('Error details:', data);
+          throw new Error(data.message || 'Failed to update form');
+        }
+
+        notifications.show({
+          title: 'Progress Updated',
+          message: 'Your changes have been saved.',
+          color: 'green',
+        });
+        
+        // Move to next step
+        setActive((current) => (current < 4 ? current + 1 : current));
+      } catch (error: any) {
+        console.error('Update error:', error);
+        notifications.show({
+          title: 'Error',
+          message: error.message || 'Failed to update form. Please try again.',
+          color: 'red',
+        });
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Just move to next step if no submission needed
+      setActive((current) => (current < 4 ? current + 1 : current));
     }
-    setActive((current) => (current < 9 ? current + 1 : current));
   };
 
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
   const handleSubmit = async (values: any) => {
+    console.log('handleSubmit called with values:', values);
     setLoading(true);
     
     try {
-      const response = await fetch('/api/submissions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
+      // If we have a submissionId, first update with Step 5 data, then mark as complete
+      if (submissionId) {
+        // Update with Step 5 data
+        const step5Data = {
+          immigrationStatus: form.values.immigrationStatus || null,
+          specialCircumstances: form.values.specialCircumstances || null,
+          referredBy: form.values.referredBy || null,
+          howDidYouKnow: form.values.howDidYouKnow || null,
+          preferredChannelLink: form.values.preferredChannelLink || null,
+          preferredChannel: form.values.preferredChannel || null,
+        };
+        
+        console.log('Final submission with Step 5 data:', step5Data);
+        
+        const response = await fetch(`/api/submissions/${submissionId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(step5Data),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
+        console.log('Final submission response:', data);
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to submit form');
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to submit form');
+        }
+
+        notifications.show({
+          title: 'Success!',
+          message: 'Your transfer advising form has been submitted successfully.',
+          color: 'teal',
+        });
+
+        form.reset();
+        setActive(0);
+        setSubmissionId(null);
+        if (onBack) onBack();
+      } else {
+        // Fallback: create new submission if no ID exists
+        console.log('Creating new submission with all data');
+        
+        const response = await fetch('/api/submissions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(values),
+        });
+
+        const data = await response.json();
+        console.log('New submission response:', data);
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to submit form');
+        }
+
+        notifications.show({
+          title: 'Success!',
+          message: 'Your transfer advising form has been submitted successfully.',
+          color: 'teal',
+        });
+
+        form.reset();
+        setActive(0);
+        if (onBack) onBack();
       }
-
-      notifications.show({
-        title: 'Success!',
-        message: 'Your transfer advising form has been submitted successfully.',
-        color: 'teal',
-      });
-
-      form.reset();
-      setActive(0);
-      if (onBack) onBack();
     } catch (error: any) {
+      console.error('Final submission error:', error);
       notifications.show({
         title: 'Error',
         message: error.message || 'Failed to submit form. Please try again.',
@@ -118,7 +319,7 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
     }
   };
 
-  const progress = ((active + 1) / 10) * 100;
+  const progress = ((active + 1) / 5) * 100;
 
   return (
     <Box>
@@ -127,25 +328,17 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
         <Group justify="space-between" mb="sm" wrap="wrap" gap="sm">
           <Box>
             <Text c="white" size="sm" fw={600} tt="uppercase" mb={4} className="!text-xs sm:!text-sm">
-              Transfer Application Progress
+              {
+                ['Personal & Address', 'Study & Current', 
+                 'Major & Academics', 'Transfer & Motivation', 
+                 'Immigration & Contact'][active]
+              }
             </Text>
             <Text c="#FCB116" size="xl" fw={700} className="!text-lg sm:!text-xl">
-              Step {active + 1} of 10
+              Step {active + 1} of 5
             </Text>
           </Box>
-          {onBack && (
-            <Button
-              variant="white"
-              color="red"
-              size="sm"
-              leftSection={<IoChevronBack />}
-              onClick={onBack}
-              className="!text-xs sm:!text-sm"
-            >
-              <span className="hidden sm:inline">Back to Form Selection</span>
-              <span className="sm:hidden">Back</span>
-            </Button>
-          )}
+
         </Group>
         <Progress
           value={progress}
@@ -166,78 +359,80 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
           <Stepper 
             active={active} 
             onStepClick={setActive}
-            size="lg"
-            color="msuRed"
-            completedIcon={<Text size="md" fw={700}>✓</Text>}
-            styles={{
-              step: {
-                padding: 12,
-                minWidth: 100,
-              },
-              stepIcon: {
-                borderWidth: 3,
-                borderColor: '#840029',
-                width: 48,
-                height: 48,
-                fontSize: 18,
-                fontWeight: 700,
-              },
-              stepCompletedIcon: {
-                borderColor: '#840029',
-                backgroundColor: '#840029',
-              },
-              separator: {
-                background: '#e0e0e0',
-                height: 3,
-                marginLeft: 8,
-                marginRight: 8,
-              },
-              stepBody: {
-                marginTop: 8,
-              },
-              stepLabel: {
-                fontSize: 14,
-                fontWeight: 600,
-                color: '#840029',
-              },
-              stepDescription: {
-                fontSize: 12,
-                color: '#6E6565',
-              },
-            }}
-          >
-            <Stepper.Step label="Personal Info" description="Contact details" />
-            <Stepper.Step label="Address" description="Location" />
-            <Stepper.Step label="Study Level" description="Education" />
-            <Stepper.Step label="Current" description="Institution" />
-            <Stepper.Step label="Transfer Plan" description="Destination" />
-            <Stepper.Step label="Major" description="Program" />
-            <Stepper.Step label="Academics" description="GPA & Tuition" />
-            <Stepper.Step label="Motivation" description="Why transfer" />
-            <Stepper.Step label="Immigration" description="Status" />
-            <Stepper.Step label="Contact" description="Preferences" />
-          </Stepper>
-        </Box>
-
-        {/* Mobile Stepper - Simplified */}
-        <Box className="block md:hidden mb-8">
-          <Stepper 
-            active={active} 
             size="md"
             color="msuRed"
             orientation="horizontal"
             completedIcon={<Text size="sm" fw={700}>✓</Text>}
             styles={{
               step: {
+                padding: 8,
+                flex: 1,
+                flexDirection: 'column',
+              },
+              stepIcon: {
+                borderWidth: 3,
+                borderColor: '#840029',
+                width: 44,
+                height: 44,
+                fontSize: 16,
+                fontWeight: 700,
+              },
+              stepCompletedIcon: {
+                borderColor: '#840029',
+                backgroundColor: '#840029',
+                borderRadius: 20,
+              },
+              separator: {
+                background: '#e0e0e0',
+                height: 3,
+                marginLeft: 4,
+                marginRight: 4,
+                marginTop: -30,
+              },
+              stepBody: {
+                marginTop: 12,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              },
+              stepLabel: {
+                fontSize: 13,
+                fontWeight: 600,
+                color: '#840029',
+                textAlign: 'center',
+                display: 'hidden',
+              },
+            }}
+          >
+            <Stepper.Step label="Personal & Address"  />
+            <Stepper.Step label="Study & Current"  />
+            <Stepper.Step label="Major & Academics"  />
+            <Stepper.Step label="Transfer & Why"  />
+            <Stepper.Step label="Immigration & Contact"  />
+          </Stepper>
+        </Box>
+
+        {/* Mobile Stepper - Horizontal with numbers only */}
+        {/* <Box className="block md:hidden mb-8">
+          <Stepper 
+            active={active} 
+            size="sm"
+            color="msuRed"
+            orientation="horizontal"
+            completedIcon={<Text size="xs" fw={700}>✓</Text>}
+            styles={{
+              step: {
                 padding: 4,
+                flex: 1,
               },
               stepIcon: {
                 borderWidth: 2,
                 borderColor: '#840029',
-                width: 36,
-                height: 36,
-                fontSize: 14,
+                width: 32,
+                height: 32,
+                fontSize: 13,
                 fontWeight: 700,
+                minWidth: 32,
               },
               stepCompletedIcon: {
                 borderColor: '#840029',
@@ -246,43 +441,29 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
               separator: {
                 background: '#e0e0e0',
                 height: 2,
+                marginLeft: 2,
+                marginRight: 2,
               },
               stepBody: {
                 display: 'none',
               },
             }}
           >
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((step) => (
-              <Stepper.Step key={step} />
-            ))}
+            <Stepper.Step />
+            <Stepper.Step />
+            <Stepper.Step />
+            <Stepper.Step />
+            <Stepper.Step />
           </Stepper>
-        </Box>
+        </Box> */}
 
-        <Box mb="xl" p={{ base: 'sm', sm: 'md' }} style={{ background: '#fef3c7', borderRadius: 8, borderLeft: '4px solid #840029' }}>
-          <Text size="md" fw={600} c="#840029" mb={4} className="text-sm sm:text-base">
-            {
-              ['Personal Identity & Contact', 'Complete Address', 'Study Level & Prior Education', 
-               'Current Enrollment', 'Transfer Destination & Timing', 'Major Plan', 
-               'Academics, Tuition & Scholarships', 'Motivation & Profile Highlights', 
-               'Immigration & Special Circumstances', 'Referral & Communication Preferences'][active]
-            }
-          </Text>
-          <Text size="sm" c="#6E6565" className="text-xs sm:text-sm">
-            All fields marked with <Text component="span" c="red">*</Text> are required for the full application.
-          </Text>
-        </Box>
 
         <form onSubmit={form.onSubmit(handleSubmit)}>
-          {active === 0 && <Step1PersonalInfo form={form} />}
-          {active === 1 && <Step2Address form={form} />}
-          {active === 2 && <Step3StudyLevel form={form} />}
-          {active === 3 && <Step4CurrentEnrollment form={form} />}
-          {active === 4 && <Step5TransferDestination form={form} />}
-          {active === 5 && <Step6MajorPlan form={form} />}
-          {active === 6 && <Step7Academics form={form} />}
-          {active === 7 && <Step8Motivation form={form} />}
-          {active === 8 && <Step9Immigration form={form} />}
-          {active === 9 && <Step10Communication form={form} />}
+          {active === 0 && <CombinedStep1PersonalAddress form={form} />}
+          {active === 1 && <CombinedStep2StudyLevelCurrent form={form} />}
+          {active === 2 && <CombinedStep3MajorAcademics form={form} />}
+          {active === 3 && <CombinedStep4TransferMotivation form={form} />}
+          {active === 4 && <CombinedStep5ImmigrationContact form={form} />}
 
           <Group justify="space-between" mt="xl" pt="xl" style={{ borderTop: '2px solid #f0f0f0' }} wrap="wrap" gap="md">
             <Button 
@@ -305,12 +486,13 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
             >
               Previous
             </Button>
-            {active < 9 ? (
+            {active < 4 ? (
               <Button 
                 size="lg"
                 className="!text-sm sm:!text-base w-full xs:w-auto"
                 rightSection={<IoChevronForward />}
                 onClick={nextStep}
+                loading={loading}
                 styles={{
                   root: {
                     background: 'linear-gradient(135deg, #840029 0%, #BA4F21 100%)',
@@ -320,13 +502,13 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
                   },
                 }}
               >
-                Next Step
+                {active === 0 ? 'Save & Continue' : 'Next Step'}
               </Button>
             ) : (
               <Button 
                 type="submit" 
                 size="lg"
-                className="!text-sm sm:!text-base w-full xs:w-auto"
+                className="!text-sm sm:!text-base w-full xs:w-auto cursor-pointer"
                 loading={loading}
                 styles={{
                   root: {
@@ -339,7 +521,7 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
                   },
                 }}
               >
-                Submit Application
+                Check Your Eligibility
               </Button>
             )}
           </Group>

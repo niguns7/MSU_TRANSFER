@@ -2,10 +2,8 @@
 
 import { Modal, TextInput, Stack, Button, Checkbox } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { zodResolver } from 'mantine-form-zod-resolver';
 import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
-import { partialFormSchema } from '@/lib/validations';
 
 interface Props {
   opened: boolean;
@@ -17,18 +15,17 @@ export function PartialFormModal({ opened, onClose, onSuccess }: Props) {
   const [loading, setLoading] = useState(false);
 
   const form = useForm({
-    mode: 'uncontrolled',
-    validate: zodResolver(partialFormSchema),
+    validateInputOnBlur: true,
     initialValues: {
       formMode: 'partial' as const,
       fullName: '',
       email: '',
       phone: '',
-      dateOfBirth: null,
+      dateOfBirth: '',
       address: '',
       studyLevel: '',
       previousCollege: '',
-      termYear: '',
+      termSeason: '',
       major: '',
       countryOfBirth: '',
       formDate: new Date(),
@@ -37,18 +34,27 @@ export function PartialFormModal({ opened, onClose, onSuccess }: Props) {
   });
 
   const handleSubmit = async (values: any) => {
+    console.log('PartialForm - handleSubmit called with values:', values);
     setLoading(true);
 
     try {
+      // Convert dateOfBirth string to Date object if present
+      const submissionData = {
+        ...values,
+        dateOfBirth: values.dateOfBirth ? new Date(values.dateOfBirth) : null,
+      };
+      
+      console.log('PartialForm - Sending POST request with data:', submissionData);
       const response = await fetch('/api/submissions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(submissionData),
       });
 
       const data = await response.json();
+      console.log('PartialForm - Response:', data);
 
       if (!response.ok) {
         throw new Error(data.message || 'Failed to submit form');
@@ -63,6 +69,7 @@ export function PartialFormModal({ opened, onClose, onSuccess }: Props) {
       form.reset();
       onSuccess();
     } catch (error: any) {
+      console.error('PartialForm - Submission error:', error);
       notifications.show({
         title: 'Error',
         message: error.message || 'Failed to submit form. Please try again.',
@@ -75,130 +82,142 @@ export function PartialFormModal({ opened, onClose, onSuccess }: Props) {
 
   const formContent = (
     <form onSubmit={form.onSubmit(handleSubmit)} className="space-y-6">
-      <div className="mb-4">
-        <p className="text-lg font-medium" style={{ color: '#840029' }}>
-          Please provide your name as in I-20/passport. <span className="text-red-500">*</span>
-        </p>
-      </div>
+
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label className="block text-md font-medium mb-2">
             Enter Name <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
-            placeholder="..."
-            className="w-full px-4 py-3 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
-            {...form.getInputProps('fullName')}
+            placeholder="Enter Name"
+            className="w-full p-4 mt-2 placeholder:text-black bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
+            value={form.values.fullName}
+            onChange={(e) => form.setFieldValue('fullName', e.target.value)}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label className="block text-md font-medium mb-2">
             Email <span className="text-red-500">*</span>
           </label>
           <input
             type="email"
             placeholder="Enter email"
-            className="w-full px-4 py-3 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
-            {...form.getInputProps('email')}
+            className="w-full p-4 mt-2 placeholder:text-black bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
+            value={form.values.email}
+            onChange={(e) => form.setFieldValue('email', e.target.value)}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label className="block text-md font-medium mb-2">
             Phone <span className="text-red-500">*</span>
           </label>
           <input
             type="tel"
-            placeholder="Enter Name"
-            className="w-full px-4 py-3 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
-            {...form.getInputProps('phone')}
+            placeholder="Enter Phone"
+            className="w-full p-4 mt-2 placeholder:text-black bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
+            value={form.values.phone}
+            onChange={(e) => form.setFieldValue('phone', e.target.value)}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label className="block text-md font-medium mb-2">
             Date Of Birth <span className="text-red-500">*</span>
           </label>
           <input
             type="date"
             placeholder="Enter DOB"
-            className="w-full px-4 py-3 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
-            {...form.getInputProps('dateOfBirth')}
+            className="w-full p-4 mt-2 placeholder:text-black bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
+            value={form.values.dateOfBirth || ''}
+            onChange={(e) => form.setFieldValue('dateOfBirth', e.target.value)}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label className="block text-md font-medium mb-2">
             Complete address (Street, Zip code, State) <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             placeholder="Enter address"
-            className="w-full px-4 py-3 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
-            {...form.getInputProps('address')}
+            className="w-full p-4 mt-2 placeholder:text-black bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
+            value={form.values.address}
+            onChange={(e) => form.setFieldValue('address', e.target.value)}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label className="block text-md font-medium mb-2">
             Study Level <span className="text-red-500">*</span>
           </label>
-          <input
-            type="text"
-            placeholder="Enter study Level"
-            className="w-full px-4 py-3 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
-            {...form.getInputProps('studyLevel')}
-          />
+          <select
+            className="w-full p-4 mt-2 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
+            value={form.values.studyLevel}
+            onChange={(e) => form.setFieldValue('studyLevel', e.target.value)}
+          >
+            <option value="">Select Study Level</option>
+            <option value="Freshman">Freshman</option>
+            <option value="Undergraduate">Undergraduate</option>
+            <option value="Graduate">Graduate</option>
+            <option value="InternationalTransfer">International Transfer</option>
+          </select>
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label className="block text-md font-medium mb-2">
             Previous College <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
-            placeholder="Enter study Level"
-            className="w-full px-4 py-3 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
-            {...form.getInputProps('previousCollege')}
+            placeholder="Enter Previous College"
+            className="w-full p-4 mt-2 placeholder:text-black bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
+            value={form.values.previousCollege}
+            onChange={(e) => form.setFieldValue('previousCollege', e.target.value)}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">
-            Term <span className="text-red-500">*</span>
+          <label className="block text-md font-medium mb-2">
+            What is your intended term for transfer? <span className="text-red-500">*</span>
           </label>
-          <input
-            type="text"
-            placeholder="Enter study Level"
-            className="w-full px-4 py-3 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
-            {...form.getInputProps('termYear')}
-          />
+          <select
+            className="w-full p-4 mt-2 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
+            value={form.values.termSeason}
+            onChange={(e) => form.setFieldValue('termSeason', e.target.value)}
+          >
+            <option value="">Select Term</option>
+            <option value="Fall">Fall</option>
+            <option value="Spring">Spring</option>
+          </select>
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label className="block text-md font-medium mb-2">
             Major <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             placeholder="Enter your Major"
-            className="w-full px-4 py-3 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
-            {...form.getInputProps('major')}
+            className="w-full p-4 mt-2 placeholder:text-black bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
+            value={form.values.major}
+            onChange={(e) => form.setFieldValue('major', e.target.value)}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label className="block text-md font-medium mb-2">
             Country Of Birth <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             placeholder="Enter your Birth Country"
-            className="w-full px-4 py-3 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
-            {...form.getInputProps('countryOfBirth')}
+            className="w-full p-4 mt-2 placeholder:text-black bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
+            value={form.values.countryOfBirth}
+            onChange={(e) => form.setFieldValue('countryOfBirth', e.target.value)}
           />
         </div>
       </div>
@@ -207,22 +226,21 @@ export function PartialFormModal({ opened, onClose, onSuccess }: Props) {
         <button
           type="submit"
           disabled={loading}
-          className="px-8 py-3 font-bold text-white rounded-lg transition-all"
+          className="px-8 py-3 font-bold text-white rounded-lg transition-all cursor-pointer"
           style={{
             background: '#840029',
             opacity: loading ? 0.6 : 1,
           }}
         >
-          {loading ? 'Submitting...' : 'Submit'}
+          {loading ? 'Submitting...' : 'Check Your Eligibility'}
         </button>
         
-        <button
-          type="button"
+        <label
           onClick={() => form.reset()}
-          className="px-8 py-3 font-medium text-blue-600 hover:text-blue-800 transition-all"
+          className="text-md text-red-800"
         >
           Clear Form
-        </button>
+        </label>
       </div>
     </form>
   );

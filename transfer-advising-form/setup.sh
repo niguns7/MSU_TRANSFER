@@ -9,7 +9,8 @@ echo "🚀 Transfer Advising Form - Quick Start"
 echo "========================================"
 echo ""
 
-# Check if .env exists
+# Check if .env existssudo certbot certificates
+
 if [ ! -f .env ]; then
     echo "📝 Creating .env file from template..."
     cp .env.example .env
