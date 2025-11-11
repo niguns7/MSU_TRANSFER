@@ -25,7 +25,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # Default project directory (change if needed)
-PROJECT_DIR="/opt/transfer-advising-form/MSU_TRANSFER"
+PROJECT_DIR="/opt/transfer-advising-form/MSU_TRANSFER/transfer-advising-form"
 
 # Check if custom directory is provided
 if [ ! -z "$1" ]; then
