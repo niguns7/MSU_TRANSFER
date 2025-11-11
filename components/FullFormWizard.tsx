@@ -276,6 +276,11 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
           color: 'teal',
         });
 
+        // Track Lead conversion
+        if (typeof window !== 'undefined' && window.fbq) {
+          window.fbq('track', 'Lead');
+        }
+
         form.reset();
         setActive(0);
         setSubmissionId(null);
@@ -306,6 +311,11 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
           message: 'Your transfer advising form has been submitted successfully.',
           color: 'teal',
         });
+
+        // Track Lead conversion
+        if (typeof window !== 'undefined' && window.fbq) {
+          window.fbq('track', 'Lead');
+        }
 
         form.reset();
         setActive(0);
