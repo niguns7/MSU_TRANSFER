@@ -1,7 +1,13 @@
-FROM node:20-alpine AS base
+FROM node:20-slim AS base
 
-# Install dependencies required for argon2
-RUN apk add --no-cache python3 make g++ libc6-compat
+# Install required dependencies including OpenSSL for Prisma
+RUN apt-get update && apt-get install -y \
+    openssl \
+    ca-certificates \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -9,10 +15,9 @@ WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json* ./
-RUN npm install
 
-# Rebuild argon2 for Alpine Linux (musl)
-RUN npm rebuild argon2 --build-from-source
+# Install dependencies
+RUN npm ci
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -20,7 +25,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Generate Prisma Client
+# Generate Prisma Client with correct binary targets
 RUN npx prisma generate
 
 # Build Next.js
@@ -42,6 +47,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/argon2 ./node_modules/argon2
 COPY --from=builder /app/prisma ./prisma
 
