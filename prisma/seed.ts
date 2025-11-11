@@ -9,7 +9,7 @@ async function main() {
   const adminEmail = process.env.ADMIN_SEED_EMAIL || 'admin@example.com';
   const adminPassword = process.env.ADMIN_SEED_PASSWORD || 'ChangeMe123!';
 
-  // Check if admin already exists
+  // Check if admin already exists in the database 
   const existingAdmin = await prisma.adminUser.findUnique({
     where: { email: adminEmail },
   });
@@ -19,7 +19,7 @@ async function main() {
     return;
   }
 
-  // Create admin user
+  // Create admin users
   const hashedPassword = await hashPassword(adminPassword);
 
   const admin = await prisma.adminUser.create({

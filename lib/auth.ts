@@ -1,8 +1,16 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { hash, verify } from 'argon2';
+import { hash, verify, argon2id } from 'argon2';
 import prisma from './prisma';
 import { adminLoginSchema } from './validations';
+
+// Optimized argon2 options for better performance
+const hashOptions = {
+  type: argon2id,
+  memoryCost: 2 ** 16, // 64 MB
+  timeCost: 3, // Reduced from default 4 for faster hashing
+  parallelism: 1,
+};
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -74,7 +82,7 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-// Helper function to hash password (used in seed)
+// Helper function to hash password (used in seed) with optimized settings
 export async function hashPassword(password: string): Promise<string> {
-  return hash(password);
+  return hash(password, hashOptions);
 }

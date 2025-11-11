@@ -4,11 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 import { FullFormWizard } from "@/components/FullFormWizard";
 import { PartialFormModal } from "@/components/PartialFormModal";
-import { Button } from "@mantine/core";
 
 export default function HomePage() {
-  const [showFullForm, setShowFullForm] = useState(true);
-  const [showPartialModal, setShowPartialModal] = useState(false);
+  const [showFullForm, setShowFullForm] = useState(false);
+  const [showPartialModal, setShowPartialModal] = useState(true);
   const [logoSrc, setLogoSrc] = useState("/images/logos.png");
   const [footerLogoSrc, setFooterLogoSrc] = useState("/images/logos.png");
 
@@ -63,20 +62,8 @@ export default function HomePage() {
               />
             </div>
 
-            {/* Request Button - Top Right */}
-            {/* <div className="absolute top-4 sm:top-6 right-4 sm:right-8">
-              <div className="group bg-white px-3 py-2 sm:px-6 sm:py-3 rounded-lg shadow-lg border-2 border-[#840029] transition-all duration-200 hover:shadow-2xl hover:scale-[1.04] cursor-pointer">
-                <span className="text-[#840029] font-semibold text-xs sm:text-sm md:text-base tracking-wide group-hover:text-black transition-colors">
-                  <span className="hidden sm:inline">
-                    Request Information Form
-                  </span>
-                  <span className="sm:hidden">Request Info</span>
-                </span>
-              </div>
-            </div> */}
-
             {/* Centered Heading */}
-            <div className="text-center mt-2   sm:mt-10 flex flex-col gap-2 sm:gap-4">
+            <div className="text-center mt-2 sm:mt-10 flex flex-col gap-2 sm:gap-4">
               <h1
                 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-2 sm:mb-4 px-4"
                 style={{
@@ -108,7 +95,7 @@ export default function HomePage() {
               >
                 <span className="text-[#fff] font-semibold text-xs sm:text-sm md:text-lg tracking-wide group-hover:text-white transition-colors">
                   <span className="hidden sm:inline">
-                    Request for information form
+                    Request for information
                   </span>
                   <span className="sm:hidden">Request Info</span>
                 </span>
@@ -123,7 +110,7 @@ export default function HomePage() {
               >
                 <span className="text-[#840029] font-semibold text-xs sm:text-sm md:text-lg tracking-wide group-hover:text-black transition-colors">
                   <span className="hidden sm:inline">
-                    Transfer Advising Appilcation
+                    Transfer Advising Form
                   </span>
                   <span className="sm:hidden">Transfer Advising</span>
                 </span>
@@ -132,34 +119,11 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Privacy Note */}
-        {/* <div className="py-8 sm:py-12 px-4">
-        <div className="container mx-auto max-w-5xl">
-          <div
-            className="bg-white p-4 sm:p-6 rounded-md shadow-md flex flex-col gap-2"
-            style={{
-              border: '2px solid #f0f0f0',
-              borderLeft: '6px solid #3b5998',
-            }}
-          >
-            <p className="text-lg sm:text-2xl font-bold mb-2" style={{ color: '#3b5998' }}>
-              Privacy Note:
-            </p>
-            <p className="text-base sm:text-xl leading-relaxed" style={{ color: '#5C5959' }}>
-              Your information will be used only to process admission-related requests and to support your academic journey. 
-              We will not share your data with third parties for any non-academic purposes.
-            </p>
-          </div>
-        </div>
-      </div> */}
-
-        <div className="mt-4">
-
-        </div>
+        <div className="mt-4"></div>
 
         {/* Form Section */}
         <div className="min-h-[300px] sm:min-h-[500px] py-3 sm:py-10 relative px-4">
-                    <p className="text-2xl text-center font-semibold text-white" >
+          <p className="text-2xl text-center font-semibold text-white">
             Please provide your details as in I-20/passport.{" "}
           </p>
           <div className="container mx-auto max-w-6xl">

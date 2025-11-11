@@ -7,6 +7,7 @@ import { sendAdminNotification } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   const traceId = generateTraceId();
+  const startTime = Date.now();
   
   try {
     // Get client IP for rate limiting
@@ -14,9 +15,17 @@ export async function POST(request: NextRequest) {
     
     // Parse request body
     const body = await request.json();
+    logger.info({ traceId, perf: `Body parsed: ${Date.now() - startTime}ms` });
+
+    // Check both rate limits in parallel for better performance
+    const [ipRateLimit, emailRateLimit] = await Promise.all([
+      checkRateLimit(clientIp, 'ip'),
+      body.email ? checkRateLimit(body.email, 'email') : Promise.resolve({ success: true, remaining: 0, reset: new Date() })
+    ]);
     
-    // Check rate limit by IP
-    const ipRateLimit = await checkRateLimit(clientIp, 'ip');
+    logger.info({ traceId, perf: `Rate limits checked: ${Date.now() - startTime}ms` });
+    
+    // Check IP rate limit
     if (!ipRateLimit.success) {
       logger.warn({ traceId, ip: clientIp }, 'Rate limit exceeded');
       return NextResponse.json(
@@ -30,21 +39,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check rate limit by email
-    if (body.email) {
-      const emailRateLimit = await checkRateLimit(body.email, 'email');
-      if (!emailRateLimit.success) {
-        logger.warn({ traceId, email: body.email }, 'Email rate limit exceeded');
-        return NextResponse.json(
-          {
-            code: 'RATE_LIMIT_EXCEEDED',
-            message: 'Too many submissions from this email. Please try again later.',
-            traceId,
-            retryAfter: emailRateLimit.reset,
-          },
-          { status: 429 }
-        );
-      }
+    // Check email rate limit
+    if (body.email && !emailRateLimit.success) {
+      logger.warn({ traceId, email: body.email }, 'Email rate limit exceeded');
+      return NextResponse.json(
+        {
+          code: 'RATE_LIMIT_EXCEEDED',
+          message: 'Too many submissions from this email. Please try again later.',
+          traceId,
+          retryAfter: emailRateLimit.reset,
+        },
+        { status: 429 }
+      );
     }
 
     // Skip validation for progressive saves - validate only required fields
@@ -116,7 +122,7 @@ export async function POST(request: NextRequest) {
     });
 
     logger.info(
-      { traceId, submissionId: submission.id, formMode: submission.formMode },
+      { traceId, submissionId: submission.id, formMode: submission.formMode, perf: `Total time: ${Date.now() - startTime}ms` },
       'Submission created successfully'
     );
 

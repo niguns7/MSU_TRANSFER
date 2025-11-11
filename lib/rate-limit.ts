@@ -7,8 +7,28 @@ interface RateLimitResult {
   reset: Date;
 }
 
+interface CachedRateLimit {
+  count: number;
+  windowStart: number;
+  expiresAt: number;
+}
+
 const WINDOW_MS = parseInt(process.env.RATE_LIMIT_WINDOW || '600000', 10); // 10 minutes default
 const MAX_REQUESTS = parseInt(process.env.RATE_LIMIT_MAX || '20', 10);
+const CACHE_TTL_MS = 60000; // 1 minute cache
+
+// In-memory cache to reduce DB queries
+const rateLimitCache = new Map<string, CachedRateLimit>();
+
+// Clean up expired cache entries every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  rateLimitCache.forEach((value, key) => {
+    if (value.expiresAt < now) {
+      rateLimitCache.delete(key);
+    }
+  });
+}, 300000);
 
 export async function checkRateLimit(
   identifier: string,
@@ -16,10 +36,72 @@ export async function checkRateLimit(
 ): Promise<RateLimitResult> {
   const key = hashIdentifier(identifier, type);
   const now = new Date();
-  const windowStart = new Date(now.getTime() - WINDOW_MS);
+  const nowMs = now.getTime();
+  const windowStart = new Date(nowMs - WINDOW_MS);
 
   try {
-    // Get or create rate limit entry
+    // Check in-memory cache first
+    const cached = rateLimitCache.get(key);
+    if (cached && cached.expiresAt > nowMs) {
+      // Cache hit - use cached value
+      const windowStartDate = new Date(cached.windowStart);
+      
+      // Check if window has expired
+      if (windowStartDate < windowStart) {
+        // Window expired, reset count
+        cached.count = 1;
+        cached.windowStart = nowMs;
+        cached.expiresAt = nowMs + CACHE_TTL_MS;
+        rateLimitCache.set(key, cached);
+        
+        // Update DB asynchronously (don't wait)
+        prisma.rateLimit.upsert({
+          where: { key },
+          create: {
+            key,
+            count: 1,
+            windowStart: now,
+          },
+          update: {
+            count: 1,
+            windowStart: now,
+          },
+        }).catch(err => console.error('Failed to update rate limit in DB:', err));
+        
+        return {
+          success: true,
+          remaining: MAX_REQUESTS - 1,
+          reset: new Date(nowMs + WINDOW_MS),
+        };
+      }
+      
+      // Check if limit exceeded
+      if (cached.count >= MAX_REQUESTS) {
+        return {
+          success: false,
+          remaining: 0,
+          reset: new Date(cached.windowStart + WINDOW_MS),
+        };
+      }
+      
+      // Increment count in cache
+      cached.count++;
+      rateLimitCache.set(key, cached);
+      
+      // Update DB asynchronously
+      prisma.rateLimit.update({
+        where: { key },
+        data: { count: { increment: 1 } },
+      }).catch(err => console.error('Failed to increment rate limit in DB:', err));
+      
+      return {
+        success: true,
+        remaining: MAX_REQUESTS - cached.count,
+        reset: new Date(cached.windowStart + WINDOW_MS),
+      };
+    }
+
+    // Cache miss - query database
     let rateLimit = await prisma.rateLimit.findUnique({
       where: { key },
     });
@@ -34,10 +116,17 @@ export async function checkRateLimit(
         },
       });
 
+      // Cache the new entry
+      rateLimitCache.set(key, {
+        count: 1,
+        windowStart: nowMs,
+        expiresAt: nowMs + CACHE_TTL_MS,
+      });
+
       return {
         success: true,
         remaining: MAX_REQUESTS - 1,
-        reset: new Date(now.getTime() + WINDOW_MS),
+        reset: new Date(nowMs + WINDOW_MS),
       };
     }
 
@@ -52,15 +141,29 @@ export async function checkRateLimit(
         },
       });
 
+      // Update cache
+      rateLimitCache.set(key, {
+        count: 1,
+        windowStart: nowMs,
+        expiresAt: nowMs + CACHE_TTL_MS,
+      });
+
       return {
         success: true,
         remaining: MAX_REQUESTS - 1,
-        reset: new Date(now.getTime() + WINDOW_MS),
+        reset: new Date(nowMs + WINDOW_MS),
       };
     }
 
     // Check if limit exceeded
     if (rateLimit.count >= MAX_REQUESTS) {
+      // Cache the limit exceeded state
+      rateLimitCache.set(key, {
+        count: rateLimit.count,
+        windowStart: rateLimit.windowStart.getTime(),
+        expiresAt: nowMs + CACHE_TTL_MS,
+      });
+
       return {
         success: false,
         remaining: 0,
@@ -76,6 +179,13 @@ export async function checkRateLimit(
       },
     });
 
+    // Update cache
+    rateLimitCache.set(key, {
+      count: rateLimit.count,
+      windowStart: rateLimit.windowStart.getTime(),
+      expiresAt: nowMs + CACHE_TTL_MS,
+    });
+
     return {
       success: true,
       remaining: MAX_REQUESTS - rateLimit.count,
@@ -87,7 +197,7 @@ export async function checkRateLimit(
     return {
       success: true,
       remaining: MAX_REQUESTS,
-      reset: new Date(now.getTime() + WINDOW_MS),
+      reset: new Date(nowMs + WINDOW_MS),
     };
   }
 }
