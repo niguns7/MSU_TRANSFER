@@ -9,7 +9,7 @@ WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm install
 
 # Rebuild argon2 for Alpine Linux (musl)
 RUN npm rebuild argon2 --build-from-source
