@@ -1,8 +1,16 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 export default function SuccessPage() {
+  // Track Lead conversion when success page loads
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.fbq) {
+      window.fbq('track', 'Lead');
+    }
+  }, []);
+
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
       <div className="relative max-w-2xl w-full text-center p-10 rounded-2xl overflow-hidden" style={{
