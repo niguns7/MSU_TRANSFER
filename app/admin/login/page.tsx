@@ -1,15 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Container, Paper, Title, TextInput, PasswordInput, Button, Stack } from '@mantine/core';
+import { Container, Paper, Title, TextInput, PasswordInput, Button, Stack, Checkbox } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
+
+const REMEMBER_ME_KEY = 'adminRememberMe';
+const STORED_EMAIL_KEY = 'adminEmail';
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const form = useForm({
     initialValues: {
@@ -21,6 +25,17 @@ export default function AdminLoginPage() {
       password: (value) => (value.length >= 8 ? null : 'Password must be at least 8 characters'),
     },
   });
+
+  // Load saved email on mount
+  useEffect(() => {
+    const savedEmail = localStorage.getItem(STORED_EMAIL_KEY);
+    const wasRemembered = localStorage.getItem(REMEMBER_ME_KEY) === 'true';
+    
+    if (savedEmail && wasRemembered) {
+      form.setFieldValue('email', savedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleSubmit = async (values: { email: string; password: string }) => {
     setLoading(true);
@@ -34,6 +49,15 @@ export default function AdminLoginPage() {
 
       if (result?.error) {
         throw new Error('Invalid credentials');
+      }
+
+      // Save email if remember me is checked
+      if (rememberMe) {
+        localStorage.setItem(STORED_EMAIL_KEY, values.email);
+        localStorage.setItem(REMEMBER_ME_KEY, 'true');
+      } else {
+        localStorage.removeItem(STORED_EMAIL_KEY);
+        localStorage.removeItem(REMEMBER_ME_KEY);
       }
 
       notifications.show({
@@ -74,6 +98,11 @@ export default function AdminLoginPage() {
               placeholder="Your password"
               required
               {...form.getInputProps('password')}
+            />
+            <Checkbox
+              label="Remember me"
+              checked={rememberMe}
+              onChange={(event) => setRememberMe(event.currentTarget.checked)}
             />
             <Button type="submit" fullWidth loading={loading}>
               Sign In
