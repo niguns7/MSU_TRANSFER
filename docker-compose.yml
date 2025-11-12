@@ -24,7 +24,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-    # Expose DB port only to host (optional)
     ports:
       - "5432:5432"
 
@@ -37,25 +36,49 @@ services:
       dockerfile: Dockerfile
     container_name: transfer-form-web
     restart: unless-stopped
-    env_file: .env.production
     environment:
       NODE_ENV: production
       PORT: 3000
-      # IMPORTANT: connect to db service, not 127.0.0.1
       DATABASE_URL: postgresql://transferuser:transferpassword@db:5432/transferdb?schema=public
+      NEXTAUTH_URL: https://abroadinst.com
+      NEXTAUTH_SECRET: RqEmGICNeofYv/m13dkDdyPImIbDEv63qM+dJxY5YrE=
+      APP_URL: https://abroadinst.com
+      NEXT_PUBLIC_APP_NAME: Transfer Advising Form
     depends_on:
       db:
         condition: service_healthy
     networks:
       - app_net
     ports:
-      - "3052:3000"  # App accessible on server port 3052
+      - "3000:3000"
+
+  # -----------------------
+  # pgAdmin 4
+  # -----------------------
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: transfer-form-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@abroadinst.com
+      PGADMIN_DEFAULT_PASSWORD: ChangeMe123!
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - app_net
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
 
 # -----------------------
 # Persistent Storage
 # -----------------------
 volumes:
   pgdata:
+  pgadmin_data:
 
 # -----------------------
 # Private Bridge Network
