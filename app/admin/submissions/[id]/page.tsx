@@ -213,7 +213,7 @@ export default function SubmissionDetailPage() {
               Transfer Advising Application
             </Title>
             <Text size="lg" c="dimmed">
-              Montana State University Transfer Program
+              Midwestern State University Transfer Program
             </Text>
             <Badge size="lg" color={submission.formMode === 'full' ? 'blue' : 'gray'} mt="sm">
               {submission.formMode.toUpperCase()} APPLICATION
@@ -518,7 +518,7 @@ export default function SubmissionDetailPage() {
               This application was submitted on {new Date(submission.createdAt).toLocaleString()}
             </Text>
             <Text size="xs" c="dimmed" mt="xs">
-              Montana State University Transfer Advising Program
+              Midwestern State University Transfer Advising Program
             </Text>
           </Box>
         </Paper>

@@ -6,6 +6,7 @@ import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { theme } from './theme';
 import Script from 'next/script';
+import MetaPixelRouteTracker from '@/components/MetaPixelRouteTracker';
 
 export const metadata = {
   title: 'Transfer Advising Form - MSU Transfer',
@@ -22,8 +23,9 @@ export default function RootLayout({
       <head>
         <ColorSchemeScript />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        
-        {/* Meta Pixel Code */}
+      </head>
+      <body>
+        {/* Meta Pixel Code - Moved to body for proper client-side execution */}
         <Script
           id="meta-pixel"
           strategy="afterInteractive"
@@ -37,22 +39,26 @@ export default function RootLayout({
               t.src=v;s=b.getElementsByTagName(e)[0];
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
-              fbq('init', '1438918566712036');
+              fbq('init', '1741500883180992');
               fbq('track', 'PageView');
             `,
           }}
         />
+        
+        {/* Noscript fallback - Moved to body so Next.js renders it */}
         <noscript>
           <img
             height="1"
             width="1"
             style={{ display: 'none' }}
-            src="https://www.facebook.com/tr?id=1438918566712036&ev=PageView&noscript=1"
+            src="https://www.facebook.com/tr?id=1741500883180992&ev=PageView&noscript=1"
             alt=""
           />
         </noscript>
-      </head>
-      <body>
+
+        {/* Route change tracker for SPA navigation */}
+        <MetaPixelRouteTracker />
+
         <MantineProvider theme={theme}>
           <Notifications position="top-right" />
           {children}
