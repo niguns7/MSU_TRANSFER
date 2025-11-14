@@ -4,6 +4,9 @@ import prisma from '@/lib/prisma';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import logger, { generateTraceId } from '@/lib/logger';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }

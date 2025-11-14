@@ -7,6 +7,8 @@ import { Container, Paper, Title, TextInput, PasswordInput, Button, Stack, Check
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 
+export const dynamic = 'force-dynamic';
+
 const REMEMBER_ME_KEY = 'adminRememberMe';
 const STORED_EMAIL_KEY = 'adminEmail';
 

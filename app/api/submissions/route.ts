@@ -5,6 +5,9 @@ import { checkRateLimit, getClientIp, hashIdentifier } from '@/lib/rate-limit';
 import logger, { generateTraceId } from '@/lib/logger';
 import { sendAdminNotification } from '@/lib/email';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function POST(request: NextRequest) {
   const traceId = generateTraceId();
   const startTime = Date.now();

@@ -14,10 +14,10 @@ FROM base AS deps
 WORKDIR /app
 
 # Copy package files
-COPY package.json package-lock.json* ./
+COPY package.json yarn.lock ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies using yarn
+RUN corepack enable && yarn install --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -30,7 +30,7 @@ RUN npx prisma generate
 
 # Build Next.js
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN npm run build
+RUN corepack enable && yarn build
 
 # Production image, copy all the files and run next
 FROM base AS runner

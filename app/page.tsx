@@ -5,6 +5,8 @@ import Image from "next/image";
 import { FullFormWizard } from "@/components/FullFormWizard";
 import { PartialFormModal } from "@/components/PartialFormModal";
 
+export const dynamic = 'force-dynamic';
+
 export default function HomePage() {
   const [showFullForm, setShowFullForm] = useState(false);
   const [showPartialModal, setShowPartialModal] = useState(true);

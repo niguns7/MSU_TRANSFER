@@ -19,6 +19,8 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 
+export const dynamic = 'force-dynamic';
+
 export default function AdminSubmissionsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();

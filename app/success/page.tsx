@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 
-export default function SuccessPage() {
+export const dynamic = 'force-dynamic';
+
+function SuccessContent() {
   // Track Lead conversion when success page loads
   useEffect(() => {
     if (typeof window !== 'undefined' && window.fbq) {
@@ -56,5 +58,13 @@ export default function SuccessPage() {
         @keyframes pop { 0%{ transform: scale(.6); opacity:0 } 60%{ transform: scale(1.05); opacity:1 } 100%{ transform: scale(1); opacity:1 } }
       `}</style>
     </main>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <SuccessContent />
+    </Suspense>
   );
 }
