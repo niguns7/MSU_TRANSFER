@@ -1,0 +1,53 @@
+name: Backup Database
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  backup:
+    name: Backup Production Database
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add server to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Create database backup
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            cd /opt/transfer-advising-form
+            
+            # Create backup directory
+            mkdir -p backups
+            
+            # Generate backup filename with timestamp
+            BACKUP_FILE="backups/backup_$(date +%Y%m%d_%H%M%S).sql"
+            
+            # Create database dump
+            docker-compose exec -T postgres pg_dump -U postgres transfer_advising > $BACKUP_FILE
+            
+            # Compress backup
+            gzip $BACKUP_FILE
+            
+            # Keep only last 7 days of backups
+            find backups/ -name "backup_*.sql.gz" -mtime +7 -delete
+            
+            echo "✅ Database backup created: ${BACKUP_FILE}.gz"
+          EOF
+
+      - name: Verify backup
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            cd /opt/transfer-advising-form/backups
+            ls -lh | tail -5
+          EOF

@@ -6,6 +6,7 @@ import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { theme } from './theme';
 import Script from 'next/script';
+import { Suspense } from 'react';
 import MetaPixelRouteTracker from '@/components/MetaPixelRouteTracker';
 
 export const metadata = {
@@ -57,7 +58,9 @@ export default function RootLayout({
         </noscript>
 
         {/* Route change tracker for SPA navigation */}
-        <MetaPixelRouteTracker />
+        <Suspense fallback={null}>
+          <MetaPixelRouteTracker />
+        </Suspense>
 
         <MantineProvider theme={theme}>
           <Notifications position="top-right" />
