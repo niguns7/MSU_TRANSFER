@@ -285,8 +285,8 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
         setActive(0);
         setSubmissionId(null);
         if (onBack) onBack();
-        // Redirect to success page
-        router.push('/success');
+        // Redirect to transfer advising success page
+        router.push('/success/transfer-advising');
       } else {
         // Fallback: create new submission if no ID exists
         console.log('Creating new submission with all data');
@@ -320,8 +320,8 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
         form.reset();
         setActive(0);
         if (onBack) onBack();
-        // Redirect to success page
-        router.push('/success');
+        // Redirect to transfer advising success page
+        router.push('/success/transfer-advising');
       }
     } catch (error: any) {
       console.error('Final submission error:', error);

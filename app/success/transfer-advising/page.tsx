@@ -1,12 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { Suspense } from 'react';
+import { useEffect, Suspense } from 'react';
 
 export const dynamic = 'force-dynamic';
 
 function SuccessContent() {
-
+  // Track Lead conversion when success page loads for Transfer Advising Form
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.fbq) {
+      window.fbq('track', 'Lead');
+    }
+  }, []);
 
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
@@ -18,8 +23,8 @@ function SuccessContent() {
         <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full opacity-20 animate-pulse-slow" style={{ background: 'radial-gradient(circle at 30% 30%, rgba(252,177,22,0.45), transparent 40%)' }} />
         <div className="absolute -bottom-24 -right-24 w-72 h-72 rounded-full opacity-20 animate-blob" style={{ background: 'radial-gradient(circle at 70% 70%, rgba(132,0,41,0.35), transparent 40%)' }} />
 
-        <h1 className="text-4xl font-extrabold text-white mb-4">Submission Received</h1>
-        <p className="text-white/90 mb-6">Thank you — your transfer advising form was submitted successfully. A member of our team will review it and reach out if we need more information.</p>
+        <h1 className="text-4xl font-extrabold text-white mb-4">Transfer Advising Form Submitted!</h1>
+        <p className="text-white/90 mb-6">Thank you for completing the full transfer advising form. A member of our team will review your information and reach out to you soon.</p>
 
         <div className="flex items-center justify-center gap-4">
           <Link href="/" className="inline-block bg-white text-msuRed font-semibold px-6 py-3 rounded-lg shadow hover:opacity-95 transition">Return Home</Link>
@@ -56,7 +61,7 @@ function SuccessContent() {
   );
 }
 
-export default function SuccessPage() {
+export default function TransferAdvisingSuccessPage() {
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
       <SuccessContent />
