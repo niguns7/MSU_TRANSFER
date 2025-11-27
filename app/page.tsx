@@ -8,8 +8,8 @@ import { PartialFormModal } from "@/components/PartialFormModal";
 export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
-  const [showFullForm, setShowFullForm] = useState(false);
-  const [showPartialModal, setShowPartialModal] = useState(true);
+  const [showFullForm, setShowFullForm] = useState(true);
+  const [showPartialModal, setShowPartialModal] = useState(false);
   const [logoSrc, setLogoSrc] = useState("/images/logos.png");
   const [footerLogoSrc, setFooterLogoSrc] = useState("/images/logos.png");
 
@@ -88,7 +88,7 @@ export default function HomePage() {
             </div>
 
             <div className="flex justify-center gap-4 sm:gap-10 flex-wrap mb-12 sm:mb-20 mt-6 sm:mt-10 px-4">
-              <div
+              {/* <div
                 onClick={() => {
                   setShowPartialModal(true);
                   setShowFullForm(false);
@@ -101,9 +101,9 @@ export default function HomePage() {
                   </span>
                   <span className="sm:hidden">Request Info</span>
                 </span>
-              </div>
+              </div> */}
 
-              <div
+              {/* <div
                 onClick={() => {
                   setShowFullForm(true);
                   setShowPartialModal(false);
@@ -116,7 +116,7 @@ export default function HomePage() {
                   </span>
                   <span className="sm:hidden">Transfer Advising</span>
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
