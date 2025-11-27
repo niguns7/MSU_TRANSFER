@@ -16,8 +16,8 @@ WORKDIR /app
 # Copy package files
 COPY package.json yarn.lock ./
 
-# Install dependencies using yarn
-RUN corepack enable && yarn install --frozen-lockfile
+# Install dependencies using yarn with increased timeout
+RUN corepack enable && yarn install --frozen-lockfile --network-timeout 300000
 
 # Rebuild the source code only when needed
 FROM base AS builder
