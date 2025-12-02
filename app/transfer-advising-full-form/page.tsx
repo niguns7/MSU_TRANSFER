@@ -10,8 +10,8 @@ import { TransferInitialForm } from "@/components/TransferInitialForm";
 export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
-  const [showFullForm, setShowFullForm] = useState(false);
-  const [showPartialModal, setShowPartialModal] = useState(true);
+  const [showFullForm, setShowFullForm] = useState(true);
+  const [showPartialModal, setShowPartialModal] = useState(false);
   const [logoSrc, setLogoSrc] = useState("/images/logos.png");
   const [footerLogoSrc, setFooterLogoSrc] = useState("/images/logos.png");
 

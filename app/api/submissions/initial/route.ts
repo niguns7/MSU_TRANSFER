@@ -72,6 +72,7 @@ export async function POST(request: NextRequest) {
     // Create submission in database
     const submission = await prisma.submission.create({
       data: {
+        // @ts-expect-error - FormMode enum will include 'initial' after prisma generate
         formMode: 'initial',
         fullName: body.fullName,
         email: body.email,

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Container, Paper, Stepper, Button, Group, Title, Text, Box, Progress } from '@mantine/core';
+import { Container, Paper, Stepper, Button, Group, Title, Text, Box, Progress, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
@@ -340,7 +340,7 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
   return (
     <Box>
       {/* Progress Header */}
-      <Paper shadow="sm" p="lg" radius="md" mb="xl" style={{ background: 'linear-gradient(135deg, #840029 0%, #BA4F21 100%)' }} className="!p-4 sm:!p-6">
+      {/* <Paper shadow="sm" p="lg" radius="md" mb="xl" style={{ background: 'linear-gradient(135deg, #840029 0%, #BA4F21 100%)' }} className="!p-4 sm:!p-6">
         <Group justify="space-between" mb="sm" wrap="wrap" gap="sm">
           <Box>
             <Text c="white" size="sm" fw={600} tt="uppercase" mb={4} className="!text-xs sm:!text-sm">
@@ -366,7 +366,42 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
             section: { background: 'linear-gradient(90deg, #FCB116 0%, #FCD34D 100%)' },
           }}
         />
-      </Paper>
+      </Paper> */}
+
+        <Stack gap="md" mb="xl">
+                <div style={{ textAlign: 'center' }}>
+                  <Title
+                    order={1}
+                    size="h2"
+                    fw={800}
+                    style={{
+                      background: 'linear-gradient(135deg, #7B0E2F 0%, #F7B500 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    MIDWESTERN STATE UNIVERSITY
+                  </Title>
+                  <Title order={2} size="h4" fw={500}>
+                    TRANSFER ADVISING FORM
+                  </Title>
+                </div>
+      
+                <Paper
+                  p="md"
+                  radius="md"
+                  style={{
+                    background: 'linear-gradient(135deg, #7B0E2F 0%, #A13A1F 50%, #F7B500 100%)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <Text c="white" fw={500} size="md" className='font-semibold'>
+                    Please provide your details as in I-20/passport.
+                  </Text>
+                </Paper>
+              </Stack>
 
       {/* Form Content */}
       <Paper shadow="lg" p="xl" radius="md" style={{ border: '2px solid #f0f0f0' }} className="!p-4 sm:!p-6 md:!p-8">

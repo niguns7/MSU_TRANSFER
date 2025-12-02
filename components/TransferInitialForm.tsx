@@ -6,6 +6,7 @@ import { useForm } from '@mantine/form';
 import { TextInput, Select, Button, Paper, Title, Text, Container, Stack, Group } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IoPersonOutline, IoMailOutline, IoCallOutline, IoSchoolOutline, IoBookOutline, IoCalendarOutline } from 'react-icons/io5';
+import { sendTransferEmail } from '@/app/actions/sendTransferEmail';
 
 interface TransferInitialFormData {
   fullName: string;
@@ -64,6 +65,23 @@ export function TransferInitialForm() {
         throw new Error(data.message || 'Failed to submit form');
       }
 
+      // Send email to the student
+      const emailResult = await sendTransferEmail({
+        to: values.email,
+        studentName: values.fullName,
+        transferFormUrl: `${window.location.origin}/transfer-form`,
+      });
+
+      if (!emailResult.success) {
+        console.error('Failed to send email:', emailResult.message);
+        // Don't fail the form submission if email fails
+        notifications.show({
+          title: 'Form Submitted',
+          message: 'Your form was submitted, but we could not send the confirmation email.',
+          color: 'orange',
+        });
+      }
+
       // Track conversion
       if (typeof window !== 'undefined' && window.fbq) {
         window.fbq('track', 'Lead');
@@ -71,7 +89,7 @@ export function TransferInitialForm() {
 
       notifications.show({
         title: 'Success!',
-        message: 'Your transfer advising initial form has been submitted.',
+        message: 'Your transfer advising initial form has been submitted. Check your email for next steps.',
         color: 'teal',
       });
 
@@ -91,7 +109,7 @@ export function TransferInitialForm() {
   return (
     <Container size="md" py="xl">
       <Paper
-        shadow="xl"
+        shadow="lg"
         p={{ base: 'md', sm: 'xl' }}
         radius="lg"
         style={{
@@ -116,8 +134,8 @@ export function TransferInitialForm() {
             >
               MIDWESTERN STATE UNIVERSITY
             </Title>
-            <Title order={2} size="h4" c="dimmed" fw={500}>
-              TRANSFER ADVISING INITIAL FORM
+            <Title order={2} size="h4" fw={500}>
+              TRANSFER ADVISING FORM
             </Title>
           </div>
 
@@ -129,7 +147,7 @@ export function TransferInitialForm() {
               textAlign: 'center',
             }}
           >
-            <Text c="white" fw={500} size="sm">
+            <Text c="white" fw={500} size="md" className='font-semibold'>
               Please provide your details as in I-20/passport.
             </Text>
           </Paper>
@@ -137,7 +155,7 @@ export function TransferInitialForm() {
 
         {/* Form */}
         <form onSubmit={form.onSubmit(handleSubmit)}>
-          <Stack gap="lg">
+          <Stack gap="lg" className='p-4'>
             {/* Full Name */}
             <TextInput
               label="Full Name"
@@ -289,23 +307,14 @@ export function TransferInitialForm() {
 
             {/* Submit Button */}
             <Group justify="space-between" mt="xl">
-              <Button
-                type="button"
-                variant="subtle"
-                color="gray"
-                size="md"
-                onClick={() => form.reset()}
-                disabled={loading}
-              >
-                Clear Form
-              </Button>
 
               <Button
                 type="submit"
-                size="md"
+                size="lg"
+                className='w-full'
                 loading={loading}
                 style={{
-                  background: 'linear-gradient(135deg, #7B0E2F 0%, #A13A1F 100%)',
+                 background: 'linear-gradient(135deg, #7B0E2F 0%, #A13A1F 50%, #F7B500 100%)',
                   borderRadius: '8px',
                   padding: '0 32px',
                 }}
@@ -330,23 +339,7 @@ export function TransferInitialForm() {
             highlight opportunities such as transfer-merit scholarships and in-state tuition advantages that may apply
             to international students. Our guidance is available to both international and domestic applicants.
           </Text>
-          <Text size="sm" ta="center" fw={500}>
-            If you&apos;d like to apply to a preferred university, you can explore programs and begin your application
-            through our online portal:{' '}
-            <a
-              href="https://www.abroadinst.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: '#7B0E2F', textDecoration: 'none', fontWeight: 600 }}
-            >
-              www.abroadinst.com
-            </a>
-          </Text>
-          <Text size="sm" c="dimmed" ta="center" mt="xs">
-            For a quick eligibility check, please complete the short form below, and our team will contact you with
-            personalized feedback. You may also reach us directly at{' '}
-            <strong>admissions@abroadinst.com</strong>.
-          </Text>
+    
         </Paper>
       </Paper>
     </Container>
