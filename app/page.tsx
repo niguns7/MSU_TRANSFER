@@ -8,8 +8,8 @@ import { PartialFormModal } from "@/components/PartialFormModal";
 export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
-  const [showFullForm, setShowFullForm] = useState(true);
-  const [showPartialModal, setShowPartialModal] = useState(false);
+  const [showFullForm, setShowFullForm] = useState(false);
+  const [showPartialModal, setShowPartialModal] = useState(true);
   const [logoSrc, setLogoSrc] = useState("/images/logos.png");
   const [footerLogoSrc, setFooterLogoSrc] = useState("/images/logos.png");
 

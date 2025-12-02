@@ -110,6 +110,7 @@ model RateLimit {
 enum FormMode {
   partial
   full
+  initial
 }
 
 enum StudyLevel {
