@@ -1,6 +1,6 @@
 FROM node:22-slim AS base
 
-# Install required dependencies including OpenSSL for Prisma
+# Install required dependencies including OpenSSL for Prismaaa
 RUN apt-get update && apt-get install -y \
     openssl \
     ca-certificates \
