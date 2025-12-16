@@ -48,7 +48,7 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
 export async function sendAdminNotification(submission: {
   id: string;
   fullName: string;
-  email: string;
+  email: string | null;
   formMode: string;
 }): Promise<void> {
   const adminEmail = process.env.ADMIN_SEED_EMAIL || 'admin@example.com';
@@ -58,6 +58,11 @@ export async function sendAdminNotification(submission: {
     <p>A new ${submission.formMode} form has been submitted.</p>
     <h3>Details:</h3>
     <ul>
+      <li><strong>ID:</strong> ${submission.id}</li>
+      <li><strong>Name:</strong> ${submission.fullName}</li>
+      <li><strong>Email:</strong> ${submission.email || 'Not provided'}</li>
+      <li><strong>Form Type:</strong> ${submission.formMode}</li>
+    </ul>
       <li><strong>Submission ID:</strong> ${submission.id}</li>
       <li><strong>Name:</strong> ${submission.fullName}</li>
       <li><strong>Email:</strong> ${submission.email}</li>

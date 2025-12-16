@@ -27,7 +27,7 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
     initialValues: {
       formMode: 'full' as const,
       fullName: '',
-      email: '',
+      // email: '',
       phone: '',
       dateOfBirth: null,
       address: '',
@@ -72,7 +72,6 @@ export function FullFormWizard({ onBack }: FullFormWizardProps) {
         const step1Data = {
           formMode: 'full' as const,
           fullName: form.values.fullName,
-          email: form.values.email,
           phone: form.values.phone,
           dateOfBirth: form.values.dateOfBirth,
           address: form.values.address,

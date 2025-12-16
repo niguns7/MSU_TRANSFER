@@ -69,10 +69,16 @@ export async function POST(request: NextRequest) {
     const ipHash = hashIdentifier(clientIp, 'ip');
     const userAgent = request.headers.get('user-agent') || undefined;
 
+    // Parse transferTime to get termSeason
+    let termSeason = 'Other';
+    if (body.transferTime) {
+      if (body.transferTime.includes('fall')) termSeason = 'Fall';
+      else if (body.transferTime.includes('spring')) termSeason = 'Spring';
+    }
+
     // Create submission in database
     const submission = await prisma.submission.create({
       data: {
-        // @ts-expect-error - FormMode enum will include 'initial' after prisma generate
         formMode: 'initial',
         fullName: body.fullName,
         email: body.email,
@@ -80,7 +86,7 @@ export async function POST(request: NextRequest) {
         studyLevel: body.studyLevel,
         currentCollege: body.currentCollege,
         major: body.intendedMajor,
-        termSeason: body.transferTime,
+        termSeason: termSeason as any,
         consent: true, // Implicit consent by submitting
         ipHash,
         ua: userAgent,

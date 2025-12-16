@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       data: {
         formMode: validated.formMode,
         fullName: validated.fullName,
-        email: validated.email,
+        email: validated.email || null,
         phone: validated.phone,
         consent: validated.consent,
         ipHash,

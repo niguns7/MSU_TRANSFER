@@ -21,7 +21,7 @@ model Submission {
 
   // Step 1: Personal Identity & Contact
   fullName        String
-  email           String
+  email           String?
   phone           String
   dateOfBirth     DateTime?
   formDate        DateTime @default(now())

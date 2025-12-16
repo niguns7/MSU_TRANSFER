@@ -34,15 +34,22 @@ export const partialFormSchema = baseSchema.extend({
 });
 
 // Full form base (without refinements for discriminated union)
-const fullFormBase = baseSchema.extend({
+const fullFormBase = z.object({
   formMode: z.literal('full'),
   
-  // Step 1: Date of birth required for full form
+  // Step 1: Personal Identity & Contact (email optional for full forms)
+  fullName: z.string().min(2, 'Full name is required').max(256, 'Name is too long').trim(),
+  email: z.string().email('Invalid email address').regex(emailRegex, 'Invalid email format').max(256).toLowerCase().optional().nullable(),
+  phone: z.string().min(10, 'Phone number is required').max(20, 'Phone number is too long').trim(),
   dateOfBirth: z.coerce.date()
     .refine((date) => {
       const age = (new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
       return age >= 15;
     }, 'Must be at least 15 years old'),
+  formDate: z.coerce.date().default(() => new Date()),
+  
+  // Consent
+  consent: z.boolean().default(false),
   
   // Step 2: Address
   address: z.string().min(10, 'Complete address is required').max(1024, 'Address is too long').trim(),

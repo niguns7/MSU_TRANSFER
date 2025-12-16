@@ -11,6 +11,7 @@ import {
   Section,
   Text,
 } from '@react-email/components';
+import Image from "next/image";
 import * as React from 'react';
 
 interface TransferEmailProps {
@@ -20,76 +21,72 @@ interface TransferEmailProps {
 
 export const TransferEmail = ({
   studentName = 'Student',
-  transferFormUrl = 'https://msu-transfer.com/transfer-form',
+  transferFormUrl = 'https://midwesternstateuniversity.transfer-advising-application.abroadinst.com/transfer-advising-full-form',
 }: TransferEmailProps) => {
+
   return (
     <Html>
       <Head />
       <Preview>Complete Your Transfer Form - Midwestern State University</Preview>
+
       <Body style={main}>
-        <Container style={container}>
-          {/* MSU Logo */}
-          <Section style={logoSection}>
-            <Img
-              src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e3/Midwestern_State_University_seal.svg/1200px-Midwestern_State_University_seal.svg.png"
-              width="150"
-              height="60"
-              alt="Midwestern State University"
-              style={logo}
-            />
-          </Section>
+        <Container style={outerWrapper}>
+          {/* Cream Card - Centered at 50% width */}
+          <Container style={card}>
 
-          {/* Main Content */}
-          <Section style={contentSection}>
-            {/* Greeting */}
-            <Heading style={heading}>Hi, {studentName}</Heading>
-
-            {/* Thank you paragraph */}
-            <Text style={paragraph}>
-              Thank you for your interest in transferring to Midwestern State University.
-            </Text>
-
-            {/* Highlighted instruction */}
-            <Text style={instructionText}>
-              To move forward, please complete the detailed transfer form using the link below:
-            </Text>
-
-            {/* CTA Button */}
-            <Section style={buttonContainer}>
-              <Button style={button} href={transferFormUrl}>
-                Complete Full Transfer Form
-              </Button>
+            {/* Logo */}
+            <Section style={logoSection}>
+              <Img
+                src="/images/msutexas-logo.png"
+                width="120"
+                height="48"
+                alt="Midwestern State University"
+                style={logo}
+              />
             </Section>
 
-            {/* Info Box */}
-            <Section style={infoBox}>
-              <Text style={infoText}>
-                This form helps us review your credits, major, and eligibility so we can guide you properly.
+            {/* Main Content */}
+            <Section style={contentSection}>
+              <Heading style={heading}>Hi, {studentName}</Heading>
+
+              <Text style={paragraph}>
+                Thank you for your interest in transferring to Midwestern State University.
+              </Text>
+
+              <Text style={highlightText}>
+                To move forward, please complete the detailed transfer form using the link below:
+              </Text>
+
+              {/* Button */}
+              <Section style={buttonContainer}>
+                <Button style={button} href={transferFormUrl}>
+                  Complete Full Transfer Form
+                </Button>
+              </Section>
+
+              {/* Horizontal Rule below button */}
+              <Section style={hrSection}>
+                <div style={fancyHr}></div>
+              </Section>
+
+              {/* Info Box */}
+              <Section style={infoBox}>
+                <Text style={infoText}>
+                  This form helps us review your credits, major, and eligibility so we can guide you properly.
+                </Text>
+              </Section>
+
+              <Text style={supportText}>
+                If you need help at any point, just reply to this email. We&apos;re here to support you.
+              </Text>
+
+              <Text style={thankYouText}>Thank you.</Text>
+
+              <Text style={teamSignature}>
+                <strong>Transfer Advising Team</strong>
               </Text>
             </Section>
-
-            {/* Support message */}
-            <Text style={supportText}>
-              If you need help at any point, just reply to this email. We&apos;re here to support you.
-            </Text>
-
-            {/* Thank you */}
-            <Text style={thankYouText}>Thank you.</Text>
-
-            {/* Team signature */}
-            <Text style={teamSignature}>
-              <strong>Transfer Advising Team</strong>
-            </Text>
-          </Section>
-
-          {/* Footer (optional) */}
-          <Section style={footer}>
-            <Text style={footerText}>
-              Midwestern State University
-              <br />
-              3410 Taft Blvd, Wichita Falls, TX 76308
-            </Text>
-          </Section>
+          </Container>
         </Container>
       </Body>
     </Html>
@@ -98,126 +95,151 @@ export const TransferEmail = ({
 
 export default TransferEmail;
 
+// =========================
 // Styles
+// =========================
 const main = {
-  backgroundColor: '#f6f9fc',
+  backgroundColor: '#FFFFFF',
+  padding: '40px 20px',
   fontFamily:
     '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  minHeight: '100vh',
 };
 
-const container = {
-  backgroundColor: '#ffffff',
+const outerWrapper = {
+  width: '100%',
+  maxWidth: '100%',
   margin: '0 auto',
-  padding: '20px 0',
-  marginBottom: '64px',
-  maxWidth: '600px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+};
+
+const card = {
+  backgroundColor: '#FEF3E2',
+  borderRadius: '8px',
+  padding: '30px 40px 40px',
+  overflow: 'hidden',
+  width: '94%',
+  maxWidth: '800px',
+  margin: '0 auto',
+  boxSizing: 'border-box' as const,
 };
 
 const logoSection = {
-  padding: '20px 40px',
-  textAlign: 'center' as const,
+  paddingBottom: '20px',
+  textAlign: 'left' as const,
 };
 
 const logo = {
-  margin: '0 auto',
   display: 'block',
 };
 
 const contentSection = {
-  padding: '20px 40px 40px',
-  backgroundColor: '#FEF3E2',
+  textAlign: 'center' as const,
+  padding: '0',
 };
 
 const heading = {
-  fontSize: '24px',
-  lineHeight: '1.4',
-  fontWeight: '600',
   color: '#5A1F33',
+  fontSize: '24px',
+  fontWeight: '600',
+  marginTop: '10px',
   marginBottom: '16px',
+  textAlign: 'center' as const,
 };
 
 const paragraph = {
-  fontSize: '16px',
-  lineHeight: '1.6',
+  fontSize: '15px',
   color: '#333333',
   marginBottom: '16px',
+  lineHeight: '1.5',
+  textAlign: 'center' as const,
 };
 
-const instructionText = {
+const highlightText = {
   fontSize: '15px',
-  lineHeight: '1.6',
   color: '#8B2635',
   marginBottom: '24px',
   fontWeight: '500',
+  textAlign: 'center' as const,
 };
 
 const buttonContainer = {
   textAlign: 'center' as const,
-  margin: '32px 0',
+  marginBottom: '24px',
 };
 
 const button = {
   backgroundColor: '#FCB116',
-  borderRadius: '8px',
-  color: '#5A1F33',
-  fontSize: '16px',
+  borderRadius: '24px',
+  fontSize: '15px',
+  padding: '12px 30px',
+  color: '#fff',
   fontWeight: '700',
   textDecoration: 'none',
-  textAlign: 'center' as const,
   display: 'inline-block',
-  padding: '14px 32px',
-  cursor: 'pointer',
 };
+
+const hrSection = {
+  margin: '24px 0',
+  textAlign: 'center' as const,
+};
+
+const hr = {
+  border: 'none',
+  borderTop: '1px solid #D4A574',
+  height: '1px',
+  margin: '0 auto',
+  width: '100%',
+};
+const fancyHr = {
+  border: 0,
+  height: '2px',
+  width: '100%',
+  margin: '32px 0',
+  background:
+    'linear-gradient(to right, rgba(255,255,255,0), #8a3040, rgba(255,255,255,0))',
+};
+
 
 const infoBox = {
   backgroundColor: '#FFFFFF',
   borderRadius: '8px',
   padding: '20px',
-  marginTop: '24px',
-  marginBottom: '24px',
+  margin: '24px 0',
   border: '1px solid #E5E5E5',
 };
 
 const infoText = {
   fontSize: '14px',
-  lineHeight: '1.6',
   color: '#666666',
-  margin: '0',
+  lineHeight: '1.6',
+  margin: 0,
   textAlign: 'center' as const,
 };
 
 const supportText = {
-  fontSize: '15px',
-  lineHeight: '1.6',
+  fontSize: '14px',
   color: '#333333',
   marginTop: '24px',
-  marginBottom: '16px',
+  marginBottom: '12px',
+  textAlign: 'center' as const,
 };
 
 const thankYouText = {
-  fontSize: '15px',
-  lineHeight: '1.6',
+  fontSize: '14px',
   color: '#333333',
   marginBottom: '8px',
+  textAlign: 'center' as const,
 };
 
 const teamSignature = {
-  fontSize: '16px',
-  lineHeight: '1.6',
+  fontSize: '15px',
   color: '#5A1F33',
   fontWeight: '700',
-  marginTop: '4px',
-};
-
-const footer = {
-  padding: '20px 40px',
   textAlign: 'center' as const,
-  borderTop: '1px solid #E5E5E5',
-};
-
-const footerText = {
-  fontSize: '12px',
-  lineHeight: '1.6',
-  color: '#999999',
-  margin: '0',
 };
