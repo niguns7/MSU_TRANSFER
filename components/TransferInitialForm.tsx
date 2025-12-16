@@ -87,7 +87,7 @@ export function TransferInitialForm() {
       const emailResult = await sendTransferEmail({
         to: values.email,
         studentName: values.fullName,
-        transferFormUrl: `${window.location.origin}/transfer-form`,
+        transferFormUrl: `${window.location.origin}/transfer-advising-full-form`,
       });
 
       if (!emailResult.success) {

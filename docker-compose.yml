@@ -51,10 +51,15 @@ services:
       # SMTP Configuration
       SMTP_HOST: smtp.gmail.com
       SMTP_PORT: 587
-      SMTP_USER: admissions@abroadinst.com
-      SMTP_PASS: fzpr xgmr gzph bpct
+      SMTP_EMAIL: admissions@abroadinst.com
+      SMTP_PASSWORD: fzpr xgmr gzph bpct
       SMTP_FROM: admissions@abroadinst.com
       SMTP_ENABLED: true
+      
+      # Legacy email variables for compatibility
+      EMAIL: admissions@abroadinst.com
+      PASS: fzpr xgmr gzph bpct
+      MAIL_USER: Abroad Institute
       
       # Admin Seed
       ADMIN_SEED_EMAIL: admin@abroadinst.com

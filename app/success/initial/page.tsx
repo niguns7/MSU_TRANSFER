@@ -58,8 +58,8 @@ function SuccessContent() {
             Your Transfer Advising Form Has Been Submitted
           </h2>
           <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto leading-relaxed animate-fade-in-up-delay-2">
-            We&apos;ve received your information and our admissions team is reviewing it. 
-            You&apos;ll hear from us soon with personalized feedback about your transfer eligibility 
+            We&apos;ve received your information successfully! 
+            <strong className="text-yellow-300"> Check your email for a link to complete the full transfer form.</strong> Our admissions team will then review your complete application and provide personalized feedback about your transfer eligibility 
             and opportunities available to you at Midwestern State University.
           </p>
 
@@ -67,8 +67,8 @@ function SuccessContent() {
           <div className="grid md:grid-cols-3 gap-4 mb-10 animate-fade-in-up-delay-3">
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
               <div className="text-3xl mb-2">📧</div>
-              <p className="text-white/90 text-sm font-medium">Check your email</p>
-              <p className="text-white/70 text-xs mt-1">Response within 24-48 hours</p>
+              <p className="text-white/90 text-sm font-medium">Check your email now</p>
+              <p className="text-white/70 text-xs mt-1">Complete the full transfer form</p>
             </div>
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
               <div className="text-3xl mb-2">📞</div>
