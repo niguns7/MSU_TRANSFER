@@ -1,4 +1,4 @@
-FROM node:22-slim AS base
+FROM node:20-slim AS base
 
 # Install required dependencies including OpenSSL for Prismaaa
 RUN apt-get update && apt-get install -y \
@@ -14,10 +14,11 @@ FROM base AS deps
 WORKDIR /app
 
 # Copy package files
-COPY package.json yarn.lock ./
+COPY package.json ./
+# Note: yarn.lock will be regenerated to respect resolutions/overrides
 
 # Install dependencies using yarn with increased timeout
-RUN corepack enable && yarn install --frozen-lockfile --network-timeout 300000
+RUN corepack enable && rm -f yarn.lock && yarn install --network-timeout 300000
 
 # Rebuild the source code only when needed
 FROM base AS builder
