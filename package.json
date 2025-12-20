@@ -55,6 +55,9 @@
     "tsx": "4.19.1",
     "typescript": "5.4.5"
   },
+  "resolutions": {
+    "entities": "^4.5.0"
+  },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   }

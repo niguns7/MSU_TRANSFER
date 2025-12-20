@@ -64,7 +64,14 @@ export const TransferEmail = ({
                 </Button>
               </Section>
 
-              {/* Horizontal Rule below button */}
+              {/* Book Session Button */}
+              <Section style={buttonContainer}>
+                <Button style={secondaryButton} href="https://calendly.com/admissions-abroadinst/30min">
+                  Book a Counseling Session
+                </Button>
+              </Section>
+
+              {/* Horizontal Rule below buttons */}
               <Section style={hrSection}>
                 <div style={fancyHr}></div>
               </Section>
@@ -81,7 +88,6 @@ export const TransferEmail = ({
               </Text>
 
               <Text style={thankYouText}>Thank you.</Text>
-
               <Text style={teamSignature}>
                 <strong>Transfer Advising Team</strong>
               </Text>
@@ -182,6 +188,19 @@ const button = {
   fontWeight: '700',
   textDecoration: 'none',
   display: 'inline-block',
+};
+
+const secondaryButton = {
+  backgroundColor: 'transparent',
+  border: '2px solid #8B2635',
+  borderRadius: '24px',
+  fontSize: '15px',
+  padding: '10px 30px',
+  color: '#8B2635',
+  fontWeight: '700',
+  textDecoration: 'none',
+  display: 'inline-block',
+  marginTop: '12px',
 };
 
 const hrSection = {
