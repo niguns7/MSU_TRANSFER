@@ -14,11 +14,10 @@ FROM base AS deps
 WORKDIR /app
 
 # Copy package files
-COPY package.json ./
-# Note: yarn.lock will be regenerated to respect resolutions/overrides
+COPY package.json yarn.lock ./
 
 # Install dependencies using yarn with increased timeout
-RUN corepack enable && rm -f yarn.lock && yarn install --network-timeout 300000
+RUN corepack enable && yarn install --frozen-lockfile --network-timeout 300000
 
 # Rebuild the source code only when needed
 FROM base AS builder
