@@ -94,12 +94,12 @@ function SuccessContent() {
               Return Home
             </Link>
             <a 
-              href="https://www.abroadinst.com" 
+              href="https://calendly.com/admissions-abroadinst/30min" 
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md text-white font-semibold px-8 py-4 rounded-xl border-2 border-white/40 hover:bg-white/30 hover:scale-105 transition-all duration-300"
             >
-              Explore Programs
+              Book a Counseling Session
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>

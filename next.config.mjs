@@ -1,10 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+
+  // Recommended for Docker / server deployments
   output: 'standalone',
-  experimental: {
-    optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
-  },
+
+  // Keep experimental empty for stability
+  experimental: {},
+
   async headers() {
     return [
       {
