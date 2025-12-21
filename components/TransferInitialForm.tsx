@@ -66,6 +66,11 @@ export function TransferInitialForm() {
   });
 
   const handleSubmit = async (values: TransferInitialFormData) => {
+    // Track form submit click
+    if (typeof window !== "undefined" && window.fbq) {
+      window.fbq("track", "InitiateCheckout");
+    }
+    
     setLoading(true);
     try {
       const response = await fetch("/api/submissions/initial", {
