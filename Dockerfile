@@ -1,6 +1,6 @@
 FROM node:20-slim AS base
 
-# Install required dependencies including OpenSSL for Prismaaa
+# Install required dependencies including OpenSSL for Prisma and sharp
 RUN apt-get update && apt-get install -y \
     openssl \
     ca-certificates \
@@ -16,8 +16,9 @@ WORKDIR /app
 # Copy package files
 COPY package.json yarn.lock ./
 
-# Install dependencies using yarn with increased timeout
-RUN corepack enable && yarn install --frozen-lockfile --network-timeout 300000
+# Install dependencies including sharp using yarn with increased timeout
+RUN corepack enable && yarn install --frozen-lockfile --network-timeout 300000 && \
+    yarn add sharp
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -70,5 +71,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Run migrations and start server using node_modules prisma
-CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node server.js"]
+# Run migrations with error handling and start server
+CMD ["sh", "-c", "echo 'Running database migrations...' && node_modules/.bin/prisma migrate deploy && echo 'Migrations complete. Starting server...' && node server.js"]
