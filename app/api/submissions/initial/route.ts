@@ -11,6 +11,7 @@ export async function POST(request: NextRequest) {
   const traceId = generateTraceId();
   const startTime = Date.now();
   
+  console.log(NextRequest, "Req")
   try {
     const clientIp = getClientIp(request);
     const body = await request.json();

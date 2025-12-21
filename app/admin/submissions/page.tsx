@@ -97,6 +97,35 @@ export default function AdminSubmissionsPage() {
     }
   };
 
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete the submission from ${name}?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/submissions/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        notifications.show({
+          title: 'Success',
+          message: 'Submission deleted successfully',
+          color: 'green',
+        });
+        fetchSubmissions();
+      } else {
+        throw new Error('Failed to delete');
+      }
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to delete submission',
+        color: 'red',
+      });
+    }
+  };
+
   if (status === 'loading' || status === 'unauthenticated') {
     return (
       <Container size="lg" py={80} ta="center">
@@ -165,13 +194,23 @@ export default function AdminSubmissionsPage() {
                     </Table.Td>
                     <Table.Td>{submission.major || '-'}</Table.Td>
                     <Table.Td>
-                      <Button
-                        size="xs"
-                        variant="light"
-                        onClick={() => router.push(`/admin/submissions/${submission.id}`)}
-                      >
-                        View Details
-                      </Button>
+                      <Group gap="xs">
+                        <Button
+                          size="xs"
+                          variant="light"
+                          onClick={() => router.push(`/admin/submissions/${submission.id}`)}
+                        >
+                          View Details
+                        </Button>
+                        <Button
+                          size="xs"
+                          variant="light"
+                          color="red"
+                          onClick={() => handleDelete(submission.id, submission.fullName)}
+                        >
+                          Delete
+                        </Button>
+                      </Group>
                     </Table.Td>
                   </Table.Tr>
                 ))}

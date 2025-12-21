@@ -238,39 +238,77 @@ export default function SubmissionDetailPage() {
 
           <Divider my="xl" />
 
-          {/* Personal Information */}
-          <Box mb="xl">
-            <Title order={3} mb="md" style={{ color: '#840029' }}>
-              Personal Information
-            </Title>
-            <Grid>
-              <Grid.Col span={6}>
-                <InfoField label="Full Name" value={submission.fullName} />
-              </Grid.Col>
-              <Grid.Col span={6}>
-                <InfoField label="Email" value={submission.email} />
-              </Grid.Col>
-              <Grid.Col span={6}>
-                <InfoField label="Phone" value={submission.phone} />
-              </Grid.Col>
-              <Grid.Col span={6}>
-                <InfoField 
-                  label="Date of Birth" 
-                  value={submission.dateOfBirth ? new Date(submission.dateOfBirth).toLocaleDateString() : 'N/A'} 
-                />
-              </Grid.Col>
-              <Grid.Col span={12}>
-                <InfoField label="Address" value={submission.address || 'N/A'} />
-              </Grid.Col>
-              {submission.countryOfBirth && (
-                <Grid.Col span={6}>
-                  <InfoField label="Country of Birth" value={submission.countryOfBirth} />
-                </Grid.Col>
-              )}
-            </Grid>
-          </Box>
+          {/* Initial Form - Only Basic Information */}
+          {submission.formMode === 'initial' && (
+            <>
+              <Box mb="xl">
+                <Title order={3} mb="md" style={{ color: '#840029' }}>
+                  Application Information
+                </Title>
+                <Grid>
+                  <Grid.Col span={6}>
+                    <InfoField label="Full Name" value={submission.fullName} />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <InfoField label="Phone" value={submission.phone} />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <InfoField label="Email" value={submission.email} />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <InfoField label="Study Level" value={submission.studyLevel || 'N/A'} />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <InfoField label="Current College" value={submission.currentCollege || 'N/A'} />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <InfoField label="Intended Major" value={submission.major || 'N/A'} />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <InfoField label="Transfer Time" value={submission.termSeason || 'N/A'} />
+                  </Grid.Col>
+                </Grid>
+              </Box>
+            </>
+          )}
 
-          <Divider my="xl" />
+          {/* Personal Information - For Partial and Full Forms */}
+          {(submission.formMode === 'partial' || submission.formMode === 'full') && (
+            <>
+              <Box mb="xl">
+                <Title order={3} mb="md" style={{ color: '#840029' }}>
+                  Personal Information
+                </Title>
+                <Grid>
+                  <Grid.Col span={6}>
+                    <InfoField label="Full Name" value={submission.fullName} />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <InfoField label="Email" value={submission.email} />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <InfoField label="Phone" value={submission.phone} />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <InfoField 
+                      label="Date of Birth" 
+                      value={submission.dateOfBirth ? new Date(submission.dateOfBirth).toLocaleDateString() : 'N/A'} 
+                    />
+                  </Grid.Col>
+                  <Grid.Col span={12}>
+                    <InfoField label="Address" value={submission.address || 'N/A'} />
+                  </Grid.Col>
+                  {submission.countryOfBirth && (
+                    <Grid.Col span={6}>
+                      <InfoField label="Country of Birth" value={submission.countryOfBirth} />
+                    </Grid.Col>
+                  )}
+                </Grid>
+              </Box>
+
+              <Divider my="xl" />
+            </>
+          )}
 
           {/* Partial Form Specific Information */}
           {submission.formMode === 'partial' && (
@@ -479,38 +517,42 @@ export default function SubmissionDetailPage() {
             </>
           )}
 
-          {/* Contact Preferences */}
-          <Box mb="xl">
-            <Title order={3} mb="md" style={{ color: '#840029' }}>
-              Contact Preferences
-            </Title>
-            <Grid>
-              <Grid.Col span={6}>
-                <InfoField 
-                  label="Preferred Channel" 
-                  value={submission.preferredChannel || 'N/A'} 
-                />
-              </Grid.Col>
-              <Grid.Col span={6}>
-                <InfoField 
-                  label="Channel Link" 
-                  value={submission.preferredChannelLink || 'N/A'} 
-                />
-              </Grid.Col>
-              <Grid.Col span={6}>
-                <InfoField 
-                  label="Referred By" 
-                  value={submission.referredBy || 'N/A'} 
-                />
-              </Grid.Col>
-              <Grid.Col span={6}>
-                <InfoField 
-                  label="How Did You Know?" 
-                  value={submission.howDidYouKnow || 'N/A'} 
-                />
-              </Grid.Col>
-            </Grid>
-          </Box>
+          {/* Contact Preferences - Only for Partial and Full Forms */}
+          {(submission.formMode === 'partial' || submission.formMode === 'full') && (
+            <>
+              <Box mb="xl">
+                <Title order={3} mb="md" style={{ color: '#840029' }}>
+                  Contact Preferences
+                </Title>
+                <Grid>
+                  <Grid.Col span={6}>
+                    <InfoField 
+                      label="Preferred Channel" 
+                      value={submission.preferredChannel || 'N/A'} 
+                    />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <InfoField 
+                      label="Channel Link" 
+                      value={submission.preferredChannelLink || 'N/A'} 
+                    />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <InfoField 
+                      label="Referred By" 
+                      value={submission.referredBy || 'N/A'} 
+                    />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <InfoField 
+                      label="How Did You Know?" 
+                      value={submission.howDidYouKnow || 'N/A'} 
+                    />
+                  </Grid.Col>
+                </Grid>
+              </Box>
+            </>
+          )}
 
           {/* Footer */}
           <Box mt="xl" pt="md" style={{ borderTop: '2px solid #f0f0f0', textAlign: 'center' }}>

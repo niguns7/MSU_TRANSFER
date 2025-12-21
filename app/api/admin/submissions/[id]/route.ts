@@ -37,3 +37,44 @@ export async function GET(
     );
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    // Check authentication
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check if submission exists
+    const submission = await prisma.submission.findUnique({
+      where: { id: params.id },
+    });
+
+    if (!submission) {
+      return NextResponse.json(
+        { error: 'Submission not found' },
+        { status: 404 }
+      );
+    }
+
+    // Delete the submission
+    await prisma.submission.delete({
+      where: { id: params.id },
+    });
+
+    return NextResponse.json(
+      { success: true, message: 'Submission deleted successfully' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Failed to delete submission:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete submission' },
+      { status: 500 }
+    );
+  }
+}

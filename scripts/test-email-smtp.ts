@@ -7,8 +7,6 @@
  */
 
 import nodemailer from 'nodemailer';
-import { render } from '@react-email/components';
-import TransferEmail from '../emails/TransferEmail';
 
 async function testEmailSMTP() {
   console.log('🧪 Testing Email with SMTP (Abroad Institute Configuration)...\n');
@@ -37,15 +35,26 @@ async function testEmailSMTP() {
     await transporter.verify();
     console.log('✅ SMTP connection verified successfully!\n');
 
-    // Render email template
-    console.log('📝 Rendering email template...');
-    const emailHtml = await render(
-      TransferEmail({
-        studentName: testName,
-        transferFormUrl: 'https://msu-transfer.abroadinst.com/transfer-form',
-      })
-    );
-    console.log('✅ Email template rendered\n');
+    // Create email template
+    console.log('📝 Creating email template...');
+    const emailHtml = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Test Email - Midwestern State University</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; padding: 20px; background-color: #f6f9fc;">
+          <div style="max-width: 600px; margin: 0 auto; background-color: #FEF3E2; border-radius: 8px; padding: 30px;">
+            <h1 style="color: #5A1F33;">Hi, ${testName}!</h1>
+            <p>This is a test email from the MSU Transfer Advising system.</p>
+            <p style="color: #666; font-size: 14px;">If you received this, SMTP is working correctly!</p>
+          </div>
+        </body>
+      </html>
+    `;
+    console.log('✅ Email template created\n');
 
     // Send email
     console.log('📤 Sending email...');

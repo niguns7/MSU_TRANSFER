@@ -47,6 +47,8 @@ services:
       # Authentication
       NEXTAUTH_URL: https://midwesternstateuniversity.transfer-advising-form.abroadinst.com
       NEXTAUTH_SECRET: gLl/Cc3MJG3JZiBPxvYUA1qIIHz1qv4fleaXiQiyc8Y=
+      BASE_URI: https://midwesternstateuniversity.transfer-advising-form.abroadinst.com
+      NEXT_PUBLIC_APP_URL: https://midwesternstateuniversity.transfer-advising-form.abroadinst.com
       
       # SMTP Configuration
       SMTP_HOST: smtp.gmail.com

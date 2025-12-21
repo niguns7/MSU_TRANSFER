@@ -12,8 +12,8 @@ export default function EmailPreviewPage() {
   return (
     <div style={{ padding: '40px', backgroundColor: '#f6f9fc' }}>
       <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-     
-
+        <h1 style={{ marginBottom: '20px', color: '#333' }}>Email Template Preview</h1>
+        
         {/* Email Template Preview */}
         <div style={{ 
           backgroundColor: 'white',

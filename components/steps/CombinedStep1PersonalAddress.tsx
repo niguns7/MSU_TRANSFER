@@ -17,7 +17,11 @@ export function CombinedStep1PersonalAddress({ form }: { form: any }) {
               className="w-full p-4 mt-2 placeholder:text-gray-400 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
               value={form.values.fullName}
               onChange={(e) => form.setFieldValue('fullName', e.target.value)}
+              onBlur={() => form.validateField('fullName')}
             />
+            {form.errors.fullName && (
+              <div className="text-red-500 text-sm mt-1">{form.errors.fullName}</div>
+            )}
           </div>
 
           <div>
@@ -27,10 +31,17 @@ export function CombinedStep1PersonalAddress({ form }: { form: any }) {
             <input
               type="email"
               placeholder="your.email@example.com"
-              className="w-full p-4 mt-2 placeholder:text-gray-400 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
-              value={form.values.email}
+              className={`w-full p-4 mt-2 placeholder:text-gray-400 bg-gray-100 rounded border-none focus:ring-2 outline-none ${
+                form.errors.email ? 'border-2 border-red-500 focus:ring-red-500' : 'focus:ring-blue-500'
+              }`}
+              value={form.values.email || ''}
               onChange={(e) => form.setFieldValue('email', e.target.value)}
+              onBlur={() => form.validateField('email')}
+              required
             />
+            {form.errors.email && (
+              <div className="text-red-500 text-sm font-semibold mt-1">{form.errors.email}</div>
+            )}
           </div>
 
           <div>
@@ -43,7 +54,11 @@ export function CombinedStep1PersonalAddress({ form }: { form: any }) {
               className="w-full p-4 mt-2 placeholder:text-gray-400 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none"
               value={form.values.phone}
               onChange={(e) => form.setFieldValue('phone', e.target.value)}
+              onBlur={() => form.validateField('phone')}
             />
+            {form.errors.phone && (
+              <div className="text-red-500 text-sm mt-1">{form.errors.phone}</div>
+            )}
           </div>
 
           <div>
@@ -55,6 +70,8 @@ export function CombinedStep1PersonalAddress({ form }: { form: any }) {
               maxDate={new Date(new Date().setFullYear(new Date().getFullYear() - 15))}
               value={form.values.dateOfBirth}
               onChange={(value) => form.setFieldValue('dateOfBirth', value)}
+              onBlur={() => form.validateField('dateOfBirth')}
+              error={form.errors.dateOfBirth}
               classNames={{
                 input: 'p-4 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none',
               }}
@@ -77,7 +94,11 @@ export function CombinedStep1PersonalAddress({ form }: { form: any }) {
               className="w-full p-4 mt-2 placeholder:text-gray-400 bg-gray-100 rounded border-none focus:ring-2 focus:ring-blue-500 outline-none resize-none"
               value={form.values.address}
               onChange={(e) => form.setFieldValue('address', e.target.value)}
+              onBlur={() => form.validateField('address')}
             />
+            {form.errors.address && (
+              <div className="text-red-500 text-sm mt-1">{form.errors.address}</div>
+            )}
           </div>
         </div>
       </div>
